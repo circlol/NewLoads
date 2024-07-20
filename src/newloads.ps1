@@ -1798,7 +1798,7 @@ Release Notes:
 	$Zero = 0
 	$One = 1
 	$OneTwo = 1
-	Show-ScriptStatus -WindowTitle "Optimization" -TweakTypeText "Registry" -TitleCounterText "Optimization" -TitleText "General" -AddCounter -SectionText "Optimization: General"
+	Show-ScriptStatus -WindowTitle "Optimization" -TweakTypeText "Registry" -TitleCounterText "Optimization" -TitleText "Optimization: General"
 	Add-LogSection -Section "Optimize: General Tweaks"
 	$EnableStatus = @(
 		@{
@@ -1954,7 +1954,7 @@ Release Notes:
 		[Int]$OneTwo = 1,
 		[Switch]$Undo
 	)
-	Show-ScriptStatus -TweakTypeText "Performance" -TitleText "Performance" -SectionText "Optimization: System"
+	Show-ScriptStatus -TweakTypeText "Performance" -TitleText "Optimization: Performance"
 	Add-LogSection -Section "Optimize: Performance Tweaks"
 	$EnableStatus = @(
 		@{
@@ -2155,7 +2155,7 @@ Release Notes:
 		[Int]$OneTwo = 1,
 		[Switch]$Undo
 	)
-	Show-ScriptStatus -TweakTypeText "Privacy" -TitleText "Privacy" -SectionText "Optimization: Privacy"
+	Show-ScriptStatus -TweakTypeText "Privacy" -TitleText "Optimization: Privacy"
 	Add-LogSection -Section "Optimize: Privacy Tweaks"
 	$EnableStatus = @(
 		@{
@@ -2540,7 +2540,7 @@ Release Notes:
 		[Int]$OneTwo = 1,
 		[Switch]$Undo
 	)
-	Show-ScriptStatus -TweakTypeText "Security" -TitleText "Security" -SectionText "Optimization: Security"
+	Show-ScriptStatus -TweakTypeText "Security" -TitleText "Optimization: Security" 
 	Add-LogSection -Section "Optimize: Security Tweaks"
 	$EnableStatus = @(
 		@{
@@ -2670,7 +2670,7 @@ History:
 		[Parameter()]
 		[Switch]$Undo
 	)
-	Show-ScriptStatus -TweakTypeText "Services" -TitleText "Services" -SectionText "Optimization: Services"
+	Show-ScriptStatus -TweakTypeText "Services" -TitleText "Optimization: Services"
 	Add-LogSection -Section "Optimize: Service Tweaks"
 	
 	
@@ -2754,7 +2754,7 @@ History:
 	param (
 		[Switch]$Undo
 	)
-	Show-ScriptStatus -TweakTypeText "TaskScheduler" -TitleText "Task Scheduler" -SectionText "Optimization: Task Scheduler"
+	Show-ScriptStatus -TweakTypeText "TaskScheduler" -TitleText "Optimization: Task Scheduler"
 	Add-LogSection -Section "Optimize: Task Scheduler"
 	if ($PSCmdlet.ShouldProcess("Get-Program", "Perform program installation")) {
 		If ($Undo) {
@@ -2793,7 +2793,7 @@ History:
 	param (
 		[Switch]$Undo
 	)
-	Show-ScriptStatus -TweakTypeText "OptionalFeatures" -TitleText "Optional Features" -SectionText "Optimization: Optional Features"
+	Show-ScriptStatus -TweakTypeText "OptionalFeatures" -TitleText "Optimization: Optional Features"
 	Add-LogSection -Section "Optimize: Optional Features"
 	if ($PSCmdlet.ShouldProcess("Get-Program", "Perform program installation")) {
 		If ($Undo) {
