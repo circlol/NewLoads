@@ -63,10 +63,11 @@ $Variables = @{
 	"SaRA"			   = [System.IO.DirectoryInfo]::new("$NewLoads\SaRA.zip")
 	"Sexp"			   = [System.IO.DirectoryInfo]::new("$NewLoads\SaRA")
 	
-	"MAS"			   = "mas.newloads.ca"
-	"SaRAURL"		   = "https://github.com/circlol/newload/raw/main/SaRACmd_17_01_0495_021.zip"
-	"StartBinURL"	   = "https://github.com/circlol/newload/raw/main/assets/start.bin"
-	"StartBin2URL"	   = "https://github.com/circlol/newload/raw/main/assets/start2.bin"
+	"MAS"			  = "mas.newloads.ca"
+	
+	"SaRAURL"		   = "https://github.com/circlol/NewLoads/raw/main/src/apps/SaRACmd_17_01_0495_021.zip"
+	"StartBinURL"	   = "https://github.com/circlol/NewLoads/raw/main/src/assets/start.bin"
+	"StartBin2URL"	   = "https://github.com/circlol/NewLoads/raw/main/src/assets/start2.bin"
 	#"adwLink"		   = "https://github.com/circlol/newload/raw/main/adwcleaner.exe"
 	
 	"PackagesRemoved"  = @()
@@ -3811,14 +3812,15 @@ History:
 		Name	  = "HEVC/H.265 Codec"
 		Installed = Get-AppxPackage -Name "Microsoft.HEVCVideoExtension"
 		#DownloadURL       = "https://github.com/circlol/newload/raw/main/assets/Microsoft.HEVCVideoExtension_2.0.60091.0_x64__8wekyb3d8bbwe.Appx"
-		DownloadURL = "https://github.com/circlol/newload/raw/main/assets/Microsoft.HEVCVideoExtensions_2.0.61933.0_neutral_~_8wekyb3d8bbwe.AppxBundle"
+		#DownloadURL = "https://github.com/circlol/newload/raw/main/assets/Microsoft.HEVCVideoExtensions_2.0.61933.0_neutral_~_8wekyb3d8bbwe.AppxBundle"
+		DownloadURL = "https://github.com/circlol/NewLoads/raw/main/src/apps/Microsoft.HEVCVideoExtensions_2.0.61933.0_neutral_~_8wekyb3d8bbwe.AppxBundle"
 		InstallerLocation = [System.IO.DirectoryInfo]::new("$NewLoads\Microsoft.HEVCVideoExtensions_2.0.61933.0_neutral_~_8wekyb3d8bbwe.AppxBundle")
 		FileExists = Test-Path -Path "$NewLoads\Microsoft.HEVCVideoExtensions_2.0.61933.0_neutral_~_8wekyb3d8bbwe.AppxBundle"
 	}
 	$OutlookForWindows = @{
 		Name	  = "Outlook for Windows"
 		Installed = Get-AppxPackage -Name "Microsoft.OutlookForWindows"
-		DownloadURL = "https://github.com/circlol/newload/raw/main/assets/Microsoft.OutlookForWindows_1.2023.920.0_x64__8wekyb3d8bbwe.Msix"
+		DownloadURL = "https://github.com/circlol/NewLoads/raw/main/src/apps/Microsoft.OutlookForWindows_1.2023.920.0_x64__8wekyb3d8bbwe.Msix"
 		InstallerLocation = [System.IO.DirectoryInfo]::new("$NewLoads\Microsoft.OutlookForWindows_1.2023.920.0_x64__8wekyb3d8bbwe.Msix")
 		FileExists = Test-Path -Path "$NewLoads\Microsoft.OutlookForWindows_1.2023.920.0_x64__8wekyb3d8bbwe.Msix"
 	}
@@ -4398,7 +4400,8 @@ History:
 		} else {
 			$WallpaperPathExists = Test-Path $Variables.wallpaperPath
 			If (!$WallpaperPathExists) {
-				$WallpaperURL = "https://raw.githubusercontent.com/circlol/newload/main/assets/mother.jpg"
+				#$WallpaperURL = "https://raw.githubusercontent.com/circlol/newload/main/assets/mother.jpg"
+				$WallpaperURL = "https://raw.githubusercontent.com/circlol/NewLoads/main/src/assets/wallpaper.jpg"
 				Write-Status "Downloading Wallpaper" "@" -NoNewLine
 				Start-BitsTransfer -Source $WallpaperURL -Destination $Variables.wpDest -Dynamic
 				Get-Status
@@ -4755,7 +4758,7 @@ History:
 			Write-Status "Cleaning Temp Folder" "-"
 			Remove-Item "$NewLoads\*.*" -Force -Recurse -Exclude "New Loads"
 			
-			Write-Status "Looking for New Loads logs to remove"
+			<#Write-Status "Looking for New Loads logs to remove"
 			Remove-Item "$Env:USERPROFILE\Desktop\New Loads.txt"
 			Get-Status
 			Remove-Item "$Env:USERPROFILE\Desktop\New Loads Errors.txt"
@@ -4763,7 +4766,7 @@ History:
 			Remove-Item "$Env:OneDrive\Desktop\New Loads.txt"
 			Get-Status
 			Remove-Item "$Env:OneDrive\Desktop\New Loads Errors.txt"
-			Get-Status
+			Get-Status#>
 			
 			
 			# - Removes installed program shortcuts from Public/User Desktop
