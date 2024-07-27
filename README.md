@@ -8,7 +8,8 @@ New Loads, a comprehensive and seamless Windows 10 & 11 setup utility, has been 
 
 # ![](https://raw.githubusercontent.com/circlol/newload/main/icon/curved-monitor_result%2064x64.png) **New Loads Overview**
 
-- **Program Installation** (Chrome, VLC, Acrobat, Zoom)
+- **Common Program Installation** (Chrome, VLC Media Player, Acrobat Acrobat Reader, Zoom)
+- 
 
 - **Mother Computer's Specific Branding** (Wallpaper, OEM Info in *_About your PC_*)
 
@@ -16,13 +17,13 @@ New Loads, a comprehensive and seamless Windows 10 & 11 setup utility, has been 
 
 - **Debloat**
 
-- **Malwarebytes ADWCleaner**
+- ~~**Malwarebytes ADWCleaner**~~ Currently disabled
 
-- **Office Removal** - _by confirmation_
+- **Microsoft Office Removal** - _by confirmation_
 
 - **Optimization**
 
-  - General Tweaks
+  - Explorer related tweaks
   - Performance related tweaks
   - Privacy
   - Security
@@ -33,9 +34,6 @@ New Loads, a comprehensive and seamless Windows 10 & 11 setup utility, has been 
 - **Bitlocker Decryption**
 
 ​	 
-
-
-
 <h2>⚠️Things to keep in mind before running</h2>
 
 1. New Loads is primarily used by Mother Computers, therefor the script will set the time-zone of the system it's run on to Pacific Standard Time.
@@ -89,22 +87,30 @@ Github Development branch: [Link](https://github.com/circlol/newloadsTesting)
 
 
 <h6>Usage Directly through powershell</h6>
-
+Main Branch:
 ```powershell
 irm run.newloads.ca | iex
+
+or
+
+Invoke-RestMethod run.newloads.ca | Invoke-Expression
 ```
 
+Beta Branch:
+```powershell
+irm beta.newloads.ca | iex
+
+or
+
+Invoke-RestMethod beta.newloads.ca | Invoke-Expression
+```
 <h6>Command Line Usage</h6>
 
-~~`& .\New Loads.exe -GUI` : Initiates New Loads with a WinForm GUI - Cannot be used with other arguments~~
-
-~~`& .\New Loads.exe -NoBranding` : Skips **Branding** and **Visuals** sections of the script~~
-
-~~`& .\New Loads.exe -SkipADW` : Skips Malwarebytes ADWCleaner scan~~
-
-~~`& .\New Loads.exe -SkipBitlocker` : Skips disabling bitlocker~~
-
-~~`& .\New Loads.exe -SkipPrograms` : Skips installing programs~~
+~~`& .\NewLoads.ps1 -GUI` : Launches New Loads in GUI~~
+`& .\NewLoads.ps1 -NoBranding` : Skips **Branding** and **Visuals** sections of the script
+~~`& .\NewLoads.ps1 -SkipADW` : Skips Malwarebytes ADWCleaner scan ~~
+`& .\NewLoads.ps1 -SkipBitlocker` : Skips disabling bitlocker
+`& .\NewLoads.ps1 -SkipPrograms` : Skips installing programs
 
 
 
@@ -239,7 +245,7 @@ irm run.newloads.ca | iex
   "26720RandomSaladGamesLLC.Spades"                       # Spades
   ```
 
-  </details>
+
 
 - [Get-Office](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/Office.psm1#L1) checks for any installed version of Office and prompts user for removal
 
@@ -255,12 +261,7 @@ irm run.newloads.ca | iex
 
 - [Services](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/Services.psm1#L1C10-L1C18) are optimized - listed below are all the services that are disabled
 
-  <details>
-    <summary>Click to Expand for a list of Disabled Services</summary>
-
-  ​      _To make suggestions submit a change or send an email to newloads@shaw.ca_
-
-​		Disabled
+	Disabled
 
   ```powershell
   "DiagTrack"			# DEFAULT: Automatic | Connected User Experiences and Telemetry
@@ -324,10 +325,6 @@ irm run.newloads.ca | iex
 
 -  Changes to the [task scheduler](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/TaskScheduler.psm1#L2) are mostly tracking related but are also listed below
 
-  <details>
-    <summary>Click to Expand for a list of Scheduled Tasks</summary>
-  ######   _To make suggestions submit a change or send an email to newloads@shaw.ca_
-  
   Enabled
   
   ```powershell
@@ -365,12 +362,8 @@ irm run.newloads.ca | iex
   "\Microsoft\Windows\Windows Media Sharing\UpdateLibrary"    
   ```
 
-​		</details>
 
 - [Optional Features](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/OptionalFeatures.psm1#L1C10-L1C18) removes old legacy features
-
-  <details>
-    <summary>Click to Expand for a list of Optional Features</summary>
 
 ###### 		 _To make suggestions submit a change or send an email to newloads@shaw.ca_
 
@@ -387,7 +380,6 @@ irm run.newloads.ca | iex
   "WorkFolders-Client"                   # Work Folders Client
   ```
 
-  </details>
 
 - Disables [Bitlocker](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/Start-BitLockerDecryption.psm1#L1C10-L1C18) on the system
 
@@ -396,9 +388,8 @@ irm run.newloads.ca | iex
 
 - [Restore point](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/New-SystemRestorePoint.psm1#L1C10-L1C18) is created at the end
 - Script [Cleanup](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/Cleanup.psm1#L1C1-L1C1)
-
 ​	</details>
-
+</details>
 ## Documentation
 
 [Documentation](https://linktodocumentation)
