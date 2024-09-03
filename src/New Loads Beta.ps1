@@ -58,7 +58,8 @@
    	- Write-Title, Write-Break, Write-TitleCounter, Write-Section all center text based off current window width
 
 ##############################################################################################################>
-[CmdletBinding(SupportsShouldProcess = $true)]
+
+#[CmdletBinding(SupportsShouldProcess = $true)]
 param (
 	[Alias("NR")]
 	[Switch]$NoRestart = $false,
