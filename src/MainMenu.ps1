@@ -9,7 +9,7 @@ Clear-Host
 
 function Get-Administrator {
     # Define the command based on the presence of 'wt'
-    $wtExists = Get-Command wt
+    $wtExists = Get-Command wt -ErrorAction SilentlyContinue
     if ($wtExists) {
         $filePath = 'wt'
         $command = "new-tab powershell -c ""irm newloads.ca | iex"" "
@@ -32,7 +32,7 @@ function Start-Terminal {
     )
 
     # Define the command based on the presence of 'wt'
-    $wtExists = Get-Command wt
+    $wtExists = Get-Command wt -ErrorAction SilentlyContinue
     if ($wtExists) {
         $filePath = 'wt'
         $command = "new-tab powershell -c ""irm $($link) | iex"" "
