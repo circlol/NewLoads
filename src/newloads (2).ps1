@@ -1,4 +1,6 @@
-﻿[CmdletBinding(SupportsShouldProcess = $true)]
+﻿#region Initialization
+
+[CmdletBinding(SupportsShouldProcess = $true)]
 param (
 	[Alias("NR")]
 	[Switch]$NoRestart = $false,
@@ -21,7 +23,6 @@ param (
 	[Alias("U")]
 	[Switch]$Undo = $false
 )
-#region Initialization
 function Test-ScriptExecution {
     # Check if the script is being run with 'Invoke-Expression' or from 'irm'
     if ($MyInvocation.InvocationName -eq '* | iex' -or $MyInvocation.InvocationName -eq "* | Invoke-Expression") {
