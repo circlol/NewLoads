@@ -22,7 +22,7 @@
 		-O    or  -SkipOptimization		(default: run)
 		-NR   or  -NoRestart			(default: off)
 		-U    or  -Undo					(default: off)
- 	- Added undo param:
+ 	- Added undo param to functions:
 		Optimize-General
 		Optimize-Performance
 		Optimize-Privacy
@@ -46,7 +46,7 @@
  	- Temporarily disabled Get-LastCheckForUpdate
 	- Changed wallpaper -> https://raw.githubusercontent.com/circlol/NewLoads/main/src/assets/wallpaper.jpg
 	- Added Show-SkipQuestion function
-	- Added Get-MissingDriver
+	- Added a driver check to assure everything is in. Under function Get-MissingDriver
 	- Added a search for timezone on local system matching specified zone.
 	- 
 
@@ -59,7 +59,7 @@
 
 ##############################################################################################################>
 
-#[CmdletBinding(SupportsShouldProcess = $true)]
+[CmdletBinding(SupportsShouldProcess = $true)]
 param (
 	[Alias("NR")]
 	[Switch]$NoRestart = $false,
@@ -103,9 +103,8 @@ Clear-Host
 #endregion
 #region Variables
 $Variables = @{
-	"Creator"		   			= "Mike Ivison"
-	"ProgramVersion"  			= "v1.08.02"
-	"LastUpdate" 	   			= "2024/08/20"
+	"ProgramVersion"  			= "v1.08.02-beta"
+	"LastUpdate" 	   			= "2024/09/06"
 	
 	
 	"ForegroundColor"  			= "White"
@@ -1420,25 +1419,6 @@ function Get-MissingDriver {
 		Show-SkipQuestion -Prompt "`nDrivers seem to be missing but idk im just a computer. You're the human.. Are you going to fix them now?"
 	}
 }
-Function Get-Motherboard {
-<#
-.SYNOPSIS
-Retrieves the motherboard model and OEM information.
-.NOTES
-Author: Circlol
-Version: 1.0
-Release Notes:
-1.0:
-    - Started logging changes.
-#>
-	[CmdletBinding()]
-	[OutputType([String])]
-	param ()
-	$motherboardModel = Get-CimInstance -ClassName Win32_BaseBoard | Select-Object -ExpandProperty Product
-	$motherboardOEM = Get-CimInstance -ClassName Win32_BaseBoard | Select-Object -ExpandProperty Manufacturer
-	[String]$CombinedString = "$motherboardOEM $motherboardModel"
-	return "$CombinedString"
-}
 function Get-NetworkStatus {
 <#
 .SYNOPSIS
@@ -1549,11 +1529,12 @@ Last Edit: 10-16-2023
 	Begin {
 		# Grab CPU info
 		try {
-			$cpu = Get-CimInstance -ClassName Win32_Processor -Property Name, NumberOfCores, NumberOfLogicalProcessors, MaxClockSpeed
+			$cpu = Get-CimInstance -ClassName Win32_Processor -Property Name, NumberOfCores, NumberOfLogicalProcessors, MaxClockSpeed, SocketDesignation
 			$cpuName = $cpu.Name
+			$SocketDesignation = $cpu.SocketDesignation
 			$clockSpeed = $cpu.MaxClockSpeed / 1000
 			$clockSpeed = [math]::Round($clockSpeed, 2)
-			$CPUCombinedString = "$cpuName @ $clockSpeed GHz"
+			$CPUCombinedString = "$cpuName @ $clockSpeed GHz on $SocketDesignation"
 		} catch {
 			return "Error retrieving CPU information: $($_)"
 			Continue
@@ -2912,105 +2893,6 @@ Changes:
 	$lastUpdateCheck = $lastUpdateCheck.ToLocalTime()
 	return $lastUpdateCheck
 }
-function Remove-InstalledProgram {
-	## TODO Attempt to make this function compatible with all types of programs and strings
-<#
-.SYNOPSIS
-Removes an installed program from the system.
-
-.NOTES
-Author: Circlol
-Version: 1.0
-History:
-    1.0:
-        - Started logging changes.
-#>
-	[CmdletBinding(SupportsShouldProcess)]
-	param (
-		[Parameter(Mandatory = $true)]
-		[String]$Name,
-		[String]$TweakType = "x86"
-	)
-	
-	$uninstall32 = Get-ChildItem "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall" |
-	ForEach-Object {
-		Get-ItemProperty $_.PSPath
-	} |
-	Where-Object {
-		$_.DisplayName -like "*$Name*"
-	} |
-	Select-Object UninstallString
-	
-	$uninstall64 = Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" |
-	ForEach-Object {
-		Get-ItemProperty $_.PSPath
-	} |
-	Where-Object {
-		$_.DisplayName -like "*$Name*"
-	} |
-	
-	Select-Object UninstallString
-	if ($uninstall64) {
-		if ($PSCmdlet.ShouldProcess("Uninstalling program: $Name")) {
-			$uninstall64 = $uninstall64.UninstallString -Replace "msiexec.exe", "" -Replace "/I", "" -Replace "/X", ""
-			$uninstall64 = $uninstall64.Trim()
-			$TweakType = "x64"
-			#Write-Output "Uninstalling $Name..."
-			
-			Write-Status "Uninstalling $Name..." "-" -NoNewLine
-			
-			try {
-				$process = Start-Process "msiexec.exe" -ArgumentList "/X $uninstall64 /qb" -Wait -PassThru
-				$exitCode = $process.ExitCode
-				if ($exitCode -eq 0) {
-					$LogEntry.Successful = $True
-					Write-Output "Uninstall of $Name succeeded with exit code $exitCode."
-					Add-Content -Path $Variables.Log -Value $logEntry
-				} else {
-					$LogEntry.Successful = $false
-					$status = "Uninstall of $Name failed with exit code $exitCode."
-					Write-Output $status
-					Add-Content -Path $Variables.Log -Value $logEntry
-					Add-Content -Path $Variables.Log -Value $status
-				}
-			} catch {
-				$status = "Uninstall of $Name failed with error: $_"
-				Write-Output $status
-				Add-Content -Path $Variables.Log -Value $status
-			}
-		}
-	}
-	
-	
-	if ($uninstall32) {
-		if ($PSCmdlet.ShouldProcess("Uninstalling program: $Name")) {
-			$uninstall32 = $uninstall32.UninstallString -Replace "msiexec.exe", "" -Replace "/I", "" -Replace "/X", ""
-			$uninstall32 = $uninstall32.Trim()
-			$TweakType = "x86"
-			#Write-Output "Uninstalling $Name..."
-			Write-Status "Uninstalling $Name..." "-" -NoNewLine
-			
-			try {
-				$process = Start-Process "msiexec.exe" -ArgumentList "/X $uninstall32 /qb" -Wait -PassThru
-				if ($exitCode -eq 0) {
-					$LogEntry.Successful = $True
-					Write-Output "Uninstall of $Name succeeded with exit code $exitCode."
-					Add-Content -Path $Variables.Log -Value $logEntry
-				} else {
-					$LogEntry.Successful = $false
-					$status = "Uninstall of $Name failed with exit code $exitCode."
-					Write-Output $status
-					Add-Content -Path $Variables.Log -Value $logEntry
-					Add-Content -Path $Variables.Log -Value $status
-				}
-			} catch {
-				$status = "Uninstall of $Name failed with error: $_"
-				Write-Output $status
-				Add-Content -Path $Variables.Log -Value $status
-			}
-		}
-	}
-}
 function Remove-ItemPropertyVerified {
 <#
 .SYNOPSIS
@@ -3553,7 +3435,7 @@ History:
 						try {
 							# if not then downloads installer
 							Write-Status "Downloading $($program.Name)" '+' -NoNewLine
-							Start-BitsTransfer -Source $program.DownloadURL -Destination $program.InstallerLocation -TransferType Download -Dynamic -DisplayName "$TweakType" -Description "Downloading $($program.Name)"
+							Start-BitsTransfer -Source $program.DownloadURL -Destination $program.InstallerLocation -TransferType Download -Dynamic -DisplayName "$TweakType" -Description "Downloading $($program.Name)" | Out-Null
 							Get-Status
 						} catch {
 							Get-Status
@@ -3564,18 +3446,18 @@ History:
 					Write-Status "Installing $($program.Name)" '+' -NoNewLine
 					
 					# Checks if the program is HEVC/H.265 Codec or Outlook for Windows
-					If ($program.Name -eq $hevc.Name -or $program.Name -eq $OutlookForWindows.Name) {
-						If ($program.Name -eq $hevc.Name) {
+					If ($program.Name -eq $Software.hevc.Name -or $program.Name -eq $Software.OutlookForWindows.Name) {
+						If ($program.Name -eq $Software.hevc.Name) {
 							try {
-								Add-AppxPackage -Path $HEVC.InstallerLocation
+								Add-AppxPackage -Path $HEVC.InstallerLocation | Out-Null
 								Get-Status
 							} catch {
 								Get-Status
 								Get-Error $Error[0]
 							}
-						} elseif ($program.Name -eq $OutlookForWindows.Name) {
+						} elseif ($program.Name -eq $Software.OutlookForWindows.Name) {
 							try {
-								Add-AppxPackage -Path $OutlookForWindows.InstallerLocation
+								Add-AppxPackage -Path $Software.OutlookForWindows.InstallerLocation| Out-Null
 								Get-Status
 							} catch {
 								Get-Status
@@ -3595,16 +3477,16 @@ History:
 					}
 					
 					# Adds UBlock Origin to Chrome
-					if ($program.Name -eq $Chrome.name) {
+					if ($program.Name -eq $Software.Chrome.name) {
 						Write-Status "Adding UBlock Origin to Chrome" '+'
-						Set-ItemPropertyVerified -Path $Registry.PathToUblockChrome -Name "update_url" -value $Chrome.ChromeLink -Type STRING -WhatIf:$WhatIfPreference
+						Set-ItemPropertyVerified -Path $Registry.PathToUblockChrome -Name "update_url" -value $Software.Chrome.ChromeLink -Type STRING -WhatIf:$WhatIfPreference
 						# TODO Create this - Set-ItemPropertyVerified -Path $Registry.PathToUblockEdge -Name "update_url" -value $Chrome.ChromeLink -Type STRING
 					}
 				} else {
 					# Checks if installed if it is then skips the installation
 					Write-Status "$($program.Name) already seems to be installed on this system.. Skipping Installation" "@"
-					if ($program.Name -eq $Chrome.name) { Write-Status "Adding UBlock Origin to Chrome" "+"
-						Set-ItemPropertyVerified -Path $Registry.PathToUblockChrome -Name "update_url" -value $Chrome.ChromeLink -Type STRING -WhatIf:$WhatIfPreference
+					if ($program.Name -eq $Software.Chrome.name) { Write-Status "Adding UBlock Origin to Chrome" "+"
+						Set-ItemPropertyVerified -Path $Registry.PathToUblockChrome -Name "update_url" -value $Software.Chrome.ChromeLink -Type STRING -WhatIf:$WhatIfPreference
 					}
 				}
 			}
@@ -3809,6 +3691,8 @@ History:
 	
 	# - System Information
 	$SystemSpecs = Get-SystemInfo
+	$MoboSerial = (Get-CimInstance -ClassName Win32_BaseBoard).SerialNumber
+	$CPUSerial
 	$IP = $(Resolve-DnsName -Name myip.opendns.com -Server 208.67.222.220).IPAddress
 	$WallpaperApplied = if ($Variables.CurrentWallpaper -eq $Variables.wpDest) { "YES" } else { "NO" }
 	
@@ -3819,6 +3703,10 @@ History:
 		$ProgramStatus[$program] = if (Get-InstalledProgram -Name $program) { "YES" } else { "NO" }
 	}
 	
+	$OptionalFeatures = Get-CimInstance -ClassName Win32_OptionalFeature | Format-Table -AutoSize
+	$UsersList = Get-CimInstance -ClassName Win32_Account | Format-Table -AutoSize -Property "Caption","Domain","Name","SID"
+
+
 	# - Email Settings
 	$smtp = 'smtp.shaw.ca'
 	$To = '<newloads@shaw.ca>'
@@ -3858,6 +3746,13 @@ Failed Registry Keys: $($Variables.FailedRegistryKeys)
 Start Time: $FormattedStartTime
 End Time: $FormattedEndTime
 
+
+- Serial Numbers -
+CPU: 
+Motherboard: $MoboSerial
+RAM:
+GPU:
+Drives:
 	
 	
 
@@ -3871,13 +3766,18 @@ $PowershellTable
 $($Variables.PackagesRemoved)
 
 
-- Installed Win32 Applications:
+- Installed win32 Applications:
 $ListOfInstalledApplications
 
 
 - Installed Appx Packages:
 $ListOfInstalledPackages
 
+- OptionalFeatures Installed:
+$OptionalFeatures
+
+- Users List:
+$UsersList
 "
 	
 	# Initiates array
@@ -4676,7 +4576,6 @@ Updates the time zone and synchronizes the system time.
 		#}
 }
 
-
 #endregion
 #region depricated
 function Update-Time.Old {
@@ -4745,8 +4644,124 @@ This example updates the system time zone to Eastern Time (US & Canada) and sync
 		Continue
 	}
 }
+Function Get-Motherboard {
+	<#
+	.SYNOPSIS
+	Retrieves the motherboard model and OEM information.
+	.NOTES
+	Author: Circlol
+	Version: 1.0
+	Release Notes:
+	1.0:
+		- Started logging changes.
+	#>
+		[CmdletBinding()]
+		[OutputType([String])]
+		param ()
+		$motherboardModel = Get-CimInstance -ClassName Win32_BaseBoard | Select-Object -ExpandProperty Product
+		$motherboardOEM = Get-CimInstance -ClassName Win32_BaseBoard | Select-Object -ExpandProperty Manufacturer
+		[String]$CombinedString = "$motherboardOEM $motherboardModel"
+		return "$CombinedString"
+	}
+function Remove-InstalledProgram {
+	## TODO Attempt to make this function compatible with all types of programs and strings
+<#
+.SYNOPSIS
+Removes an installed program from the system.
 
-
+.NOTES
+Author: Circlol
+Version: 1.0
+History:
+    1.0:
+        - Started logging changes.
+#>
+	[CmdletBinding(SupportsShouldProcess)]
+	param (
+		[Parameter(Mandatory = $true)]
+		[String]$Name,
+		[String]$TweakType = "x86"
+	)
+	
+	$uninstall32 = Get-ChildItem "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall" |
+	ForEach-Object {
+		Get-ItemProperty $_.PSPath
+	} |
+	Where-Object {
+		$_.DisplayName -like "*$Name*"
+	} |
+	Select-Object UninstallString
+	
+	$uninstall64 = Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" |
+	ForEach-Object {
+		Get-ItemProperty $_.PSPath
+	} |
+	Where-Object {
+		$_.DisplayName -like "*$Name*"
+	} |
+	
+	Select-Object UninstallString
+	if ($uninstall64) {
+		if ($PSCmdlet.ShouldProcess("Uninstalling program: $Name")) {
+			$uninstall64 = $uninstall64.UninstallString -Replace "msiexec.exe", "" -Replace "/I", "" -Replace "/X", ""
+			$uninstall64 = $uninstall64.Trim()
+			$TweakType = "x64"
+			#Write-Output "Uninstalling $Name..."
+			
+			Write-Status "Uninstalling $Name..." "-" -NoNewLine
+			
+			try {
+				$process = Start-Process "msiexec.exe" -ArgumentList "/X $uninstall64 /qb" -Wait -PassThru
+				$exitCode = $process.ExitCode
+				if ($exitCode -eq 0) {
+					$LogEntry.Successful = $True
+					Write-Output "Uninstall of $Name succeeded with exit code $exitCode."
+					Add-Content -Path $Variables.Log -Value $logEntry
+				} else {
+					$LogEntry.Successful = $false
+					$status = "Uninstall of $Name failed with exit code $exitCode."
+					Write-Output $status
+					Add-Content -Path $Variables.Log -Value $logEntry
+					Add-Content -Path $Variables.Log -Value $status
+				}
+			} catch {
+				$status = "Uninstall of $Name failed with error: $_"
+				Write-Output $status
+				Add-Content -Path $Variables.Log -Value $status
+			}
+		}
+	}
+	
+	
+	if ($uninstall32) {
+		if ($PSCmdlet.ShouldProcess("Uninstalling program: $Name")) {
+			$uninstall32 = $uninstall32.UninstallString -Replace "msiexec.exe", "" -Replace "/I", "" -Replace "/X", ""
+			$uninstall32 = $uninstall32.Trim()
+			$TweakType = "x86"
+			#Write-Output "Uninstalling $Name..."
+			Write-Status "Uninstalling $Name..." "-" -NoNewLine
+			
+			try {
+				$process = Start-Process "msiexec.exe" -ArgumentList "/X $uninstall32 /qb" -Wait -PassThru
+				if ($exitCode -eq 0) {
+					$LogEntry.Successful = $True
+					Write-Output "Uninstall of $Name succeeded with exit code $exitCode."
+					Add-Content -Path $Variables.Log -Value $logEntry
+				} else {
+					$LogEntry.Successful = $false
+					$status = "Uninstall of $Name failed with exit code $exitCode."
+					Write-Output $status
+					Add-Content -Path $Variables.Log -Value $logEntry
+					Add-Content -Path $Variables.Log -Value $status
+				}
+			} catch {
+				$status = "Uninstall of $Name failed with error: $_"
+				Write-Output $status
+				Add-Content -Path $Variables.Log -Value $status
+			}
+		}
+	}
+}
 #endregion
 
 
