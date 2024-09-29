@@ -65,7 +65,8 @@ $Variables = @{
 	
 	"MAS"			  = "mas.newloads.ca"
 	
-	"SaRAURL"		   = "https://github.com/circlol/NewLoads/raw/main/src/apps/SaRACmd_17_01_0495_021.zip"
+	#"SaRAURL"		   = "https://github.com/circlol/NewLoads/raw/main/src/apps/SaRACmd_17_01_0495_021.zip"
+	"SaRAURL" 		   = "https://github.com/circlol/NewLoads/raw/main/src/apps/SaRACmd_17_01_2276_000.zip"
 	"StartBinURL"	   = "https://github.com/circlol/NewLoads/raw/main/src/assets/start.bin"
 	"StartBin2URL"	   = "https://github.com/circlol/NewLoads/raw/main/src/assets/start2.bin"
 	#"adwLink"		   = "https://github.com/circlol/newload/raw/main/adwcleaner.exe"
@@ -2915,40 +2916,72 @@ function Get-ActivationStatus {
 		} until ($q -eq "Yes" -or $q -eq "No")
 		switch ($q) {
 			"Yes" {
-				# Enable TLSv1.2 for compatibility with older clients for current session
-				[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-				
-				$DownloadURL1 = 'https://raw.githubusercontent.com/massgravel/Microsoft-Activation-Scripts/0884271c4fcdc72d95bce7c5c7bdf77ef4a9bcef/MAS/All-In-One-Version/MAS_AIO-CRC32_31F7FD1E.cmd'
-				$DownloadURL2 = 'https://bitbucket.org/WindowsAddict/microsoft-activation-scripts/raw/0884271c4fcdc72d95bce7c5c7bdf77ef4a9bcef/MAS/All-In-One-Version/MAS_AIO-CRC32_31F7FD1E.cmd'
-				
-				$URLs = @($DownloadURL1, $DownloadURL2)
-				$RandomURL1 = Get-Random -InputObject $URLs
-				$RandomURL2 = $URLs -ne $RandomURL1
-				
-				try {
-					$response = Invoke-WebRequest -Uri $RandomURL1 -UseBasicParsing
-				} catch {
-					$response = Invoke-WebRequest -Uri $RandomURL2 -UseBasicParsing
+					try {
+					# The following code was hosted on https://get.activated.win for https://massgrave.dev
+
+					$ErrorActionPreference = "Stop"
+					# Enable TLSv1.2 for compatibility with older clients for current session
+					[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+					$DownloadURL1 = 'https://raw.githubusercontent.com/massgravel/Microsoft-Activation-Scripts/52d4c52dba8e29a3c1fb295c8946dbe6cf2f0239/MAS/All-In-One-Version-KL/MAS_AIO.cmd'
+					$DownloadURL2 = 'https://dev.azure.com/massgrave/Microsoft-Activation-Scripts/_apis/git/repositories/Microsoft-Activation-Scripts/items?path=/MAS/All-In-One-Version-KL/MAS_AIO.cmd&versionType=Commit&version=52d4c52dba8e29a3c1fb295c8946dbe6cf2f0239'
+					$DownloadURL3 = 'https://git.activated.win/massgrave/Microsoft-Activation-Scripts/raw/commit/52d4c52dba8e29a3c1fb295c8946dbe6cf2f0239/MAS/All-In-One-Version-KL/MAS_AIO.cmd'
+
+					$URLs = @($DownloadURL1, $DownloadURL2, $DownloadURL3)
+					$ShuffledURLs = $URLs | Sort-Object { Get-Random }
+
+					try {
+						$response = Invoke-WebRequest -Uri $ShuffledURLs[0] -UseBasicParsing
+					}
+					catch {
+						try {
+							$response = Invoke-WebRequest -Uri $ShuffledURLs[1] -UseBasicParsing
+						}
+						catch {
+							$response = Invoke-WebRequest -Uri $ShuffledURLs[2] -UseBasicParsing
+						}
+					}
+
+					# Verify script integrity
+					$releaseHash = '39961D29B07D59D54A709AA7B152269ADC6349752660A0C66D627B09DF18B9B6'
+					$stream = New-Object IO.MemoryStream
+					$writer = New-Object IO.StreamWriter $stream
+					$writer.Write($response)
+					$writer.Flush()
+					$stream.Position = 0
+					$hash = [BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash($stream)) -replace '-'
+					if ($hash -ne $releaseHash) {
+						Write-Warning "Hash ($hash) mismatch, aborting!`nReport this issue at https://massgrave.dev/troubleshoot"
+						$response = $null
+						return
+					}
+
+					# Check for AutoRun registry which may create issues with CMD
+					$paths = "HKCU:\SOFTWARE\Microsoft\Command Processor", "HKLM:\SOFTWARE\Microsoft\Command Processor"
+					foreach ($path in $paths) { 
+						if (Get-ItemProperty -Path $path -Name "Autorun" -ErrorAction SilentlyContinue) { 
+							Write-Warning "Autorun registry found, CMD may crash! `nManually copy-paste the below command to fix...`nRemove-ItemProperty -Path '$path' -Name 'Autorun'"
+						} 
+					}
+
+					$rand = [Guid]::NewGuid().Guid
+					$isAdmin = [bool]([Security.Principal.WindowsIdentity]::GetCurrent().Groups -match 'S-1-5-32-544')
+					$FilePath = if ($isAdmin) { "$env:SystemRoot\Temp\MAS_$rand.cmd" } else { "$env:TEMP\MAS_$rand.cmd" }
+
+					$ScriptArgs = "$args "
+					$prefix = "@::: $rand `r`n"
+					$content = $prefix + $response
+					Set-Content -Path $FilePath -Value $content
+
+					# Set ComSpec variable for current session in case its corrupt in the system
+					$env:ComSpec = "$env:SystemRoot\system32\cmd.exe"
+					Start-Process cmd.exe "/c """"$FilePath"" $ScriptArgs""" -Wait
+
+					$FilePaths = @("$env:TEMP\MAS*.cmd", "$env:SystemRoot\Temp\MAS*.cmd")
+					foreach ($FilePath in $FilePaths) { Get-Item $FilePath | Remove-Item }
 				}
-				
-				$rand = Get-Random -Maximum 99999999
-				$isAdmin = [bool]([Security.Principal.WindowsIdentity]::GetCurrent().Groups -match 'S-1-5-32-544')
-				$FilePath = if ($isAdmin) {
-					"$env:SystemRoot\Temp\MAS_$rand.cmd"
-				} else {
-					"$env:TEMP\MAS_$rand.cmd"
-				}
-				
-				$ScriptArgs = "$args "
-				$prefix = "@::: $rand `r`n"
-				$content = $prefix + $response
-				Set-Content -Path $FilePath -Value $content
-				
-				Start-Process $FilePath $ScriptArgs -Wait
-				
-				$FilePaths = @("$env:TEMP\MAS*.cmd", "$env:SystemRoot\Temp\MAS*.cmd")
-				foreach ($FilePath in $FilePaths) {
-					Get-Item $FilePath | Remove-Item
+				catch {
+					Write-Output $error[0]
 				}
 			}
 			"No" {
