@@ -1,117 +1,111 @@
-# 
+
 
 
 
 ![Logo](https://github.com/circlol/newload/raw/main/assets/icons/newloads-github.png)
+New Loads started as a project to simplify the setup process of Windows. From debloating the operating system, services to tweaking personalization settings and installing common applications. It offers a simple script that can boost device security, anonymity and performance in a quick and convenient package.
 
-New Loads, a comprehensive and seamless Windows 10 & 11 setup utility, has been meticulously crafted using Powershell from the very beginning. By incorporating tailored functions, it offers a simple and efficient means of enhancing both security and performance effortlessly.
+
+Running New Loads is as simple as:
+
+1) Open PowerShell as Administrator
+2) Type in run command for version you want
+
+<h5>Main Branch:</h5>
+```powershell
+irm run.newloads.ca | iex
+```
+or
+```powershell
+iwr -useb run.newloads.ca | iex
+```
+
+<h5>Beta Branch:</h5>
+```powershell
+irm beta.newloads.ca | iex
+```
+or
+```powershell
+iwr -useb beta.newloads.ca | iex
+```
+
+After a few minutes, your device will be set up and ready to go.
+
+
+<h2>⚠️ Be Advised</h2>
+1. New Loads is primarily used by Mother Computers. See related section for more info.
+2. New Loads was not designed to account for an already lived in OS, it is meant to be run on a fresh operating system. Please note that you may experience unwanted changes
+
+⚠️ **DISCLAIMER:** _You are using this software at your own risk, I am not responsible for any data loss. It's not guaranteed that every feature removed from the system can be easily restored._
 
 # ![](https://raw.githubusercontent.com/circlol/newload/main/icon/curved-monitor_result%2064x64.png) **New Loads Overview**
 
 - **Common Program Installation** (Chrome, VLC Media Player, Acrobat Acrobat Reader, Zoom)
-- 
 
-- **Mother Computer's Specific Branding** (Wallpaper, OEM Info in *_About your PC_*)
+- **Mother Computer's Specific Branding**
 
-- **Custom Start Menu and Taskbar Layout**
+- **Custom Start Layout (Win11), Clear Start Menu pins (Win10) and Custom Taskbar Layout**
 
-- **Debloat**
-
-- ~~**Malwarebytes ADWCleaner**~~ Currently disabled
+- **Debloat UWP Applications**
 
 - **Microsoft Office Removal** - _by confirmation_
 
 - **Optimization**
 
-  - Explorer related tweaks
-  - Performance related tweaks
-  - Privacy
-  - Security
+  - Explorer related
+  - Performance related 
+  - Privacy related
+  - Security related
   - Services
   - Task Scheduler
   - Windows Optional Features 
 
 - **Bitlocker Decryption**
-
-​	 
-<h2>⚠️Things to keep in mind before running</h2>
-
-1. New Loads is primarily used by Mother Computers, therefor the script will set the time-zone of the system it's run on to Pacific Standard Time.
-2. Unless run with switch parameter `-NoBranding` the script will apply OEM information in settings and a wallpaper will be applied. The OEM information is tied to Mother Computers.
-3. New Loads was not designed to account for an already lived in OS, it is meant to be run on a fresh operating system. Please note that you may experience unwanted changes
-
-⚠️ **DISCLAIMER:** _You are using this software at your own risk, I am not responsible for any data loss or damage that may occur. It's not guaranteed that every feature removed from the system can be easily restored._
+- **System Restore Point 
 
 
-
-<h2>Download: </h2>
+<h2>Branches: </h2>
 
 <div align="center">
   <table>
-    <thead align="center">
+    <thead>
       <tr>
-        <th>Direct Download</th>
-        <th>Supported OS's</th>
-        <th>Edition(s)</th>
-        <th>Requirements</th>
+        <th style="text-align: center; vertical-align: middle;">Direct Download</th>
+        <th style="text-align: center; vertical-align: middle;">Supported OS's</th>
+        <th style="text-align: center; vertical-align: middle;">Edition(s)</th>
+        <th style="text-align: center; vertical-align: middle;">Requirements</th>
       </tr>
     </thead>
     <tbody align="center">
       <tr>
-        <td>
+        <td style="text-align: center; vertical-align: middle;">
             <h4><a href="https://github.com/circlol/newload/raw/main/exe/newloads.exe">⬇️ Main</a></h4>(Stable)
         </td>
-        <td rowspan="2">Windows 10 and 11<br> 20H2 and Above</td>
-        <td rowspan="2">Home / Pro / Edu / Ent / Server </td>
-        <td rowspan="2">Admin<br>Powershell v5.1+<br></td>
+        <td style="text-align: center; vertical-align: middle;" rowspan="2">Windows 10 and 11<br> 20H2 and Above</td>
+        <td style="text-align: center; vertical-align: middle;" rowspan="2">Home / Pro / Edu / Ent / Server </td>
+        <td style="text-align: center; vertical-align: middle;" rowspan="2">Admin<br>Powershell v5.1+<br></td>
       </tr>
       <tr>
-        <td>
-            <h4><a href="https://github.com/circlol/newloadsTesting/raw/main/exe/newloads.exe">⬇️ Develop</a></h4>(Newer)
+        <td style="text-align: center; vertical-align: middle;">
+            <h4><a href="https://github.com/circlol/newloadsTesting/raw/main/exe/newloads.exe">⬇️ Beta</a></h4>(Newer)
         </td>
       </tr>
     </tbody>
   </table>
 </div>
 
+<h2>Specific Mother Computers Tweaks</h2>
 
+New Loads is run by a store called Mother Computers, you may find references to this, these are listed below
 
+<h5>OEMInformation added:</h5>
+This includes replacement of device Model, Manufacturer, Support Phone Number, Store Hours and Website URL. 
 
-Github Main branch: [Link](https://github.com/circlol/newload)
+This information can be found in system settings under About your PC.
 
-Github Development branch: [Link](https://github.com/circlol/newloadsTesting) 
-
-
-
-### Usage of New Loads
-
-
-<h6>Usage Directly through powershell</h6>
-Main Branch:
-```powershell
-irm run.newloads.ca | iex
-
-or
-
-Invoke-RestMethod run.newloads.ca | Invoke-Expression
-```
-
-Beta Branch:
-```powershell
-irm beta.newloads.ca | iex
-
-or
-
-Invoke-RestMethod beta.newloads.ca | Invoke-Expression
-```
-<h6>Command Line Usage</h6>
-
-~~`& .\NewLoads.ps1 -GUI` : Launches New Loads in GUI~~
-`& .\NewLoads.ps1 -NoBranding` : Skips **Branding** and **Visuals** sections of the script
-~~`& .\NewLoads.ps1 -SkipADW` : Skips Malwarebytes ADWCleaner scan ~~
-`& .\NewLoads.ps1 -SkipBitlocker` : Skips disabling bitlocker
-`& .\NewLoads.ps1 -SkipPrograms` : Skips installing programs
-
+<h5>Desktop Wallpaper Changed:</h5>
+Sets a vibrant Windows 11 style wallpaper used by the store.
+Source:  [You Zhang](https://4kwallpapers.com/abstract/blue-abstract-17317.html)
 
 
 <h2>☑️ In Depth Script Breakdown</h2>
@@ -122,274 +116,39 @@ Invoke-RestMethod beta.newloads.ca | Invoke-Expression
 - Start-Bootup checks requirements and sets execution policy
 - All Variables are imported from function Import-Variables
 - [Assets](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/exe/New%20Loads.ps1#L669) are acquired and imported
-- [Get-Programs](https://github.com/circlol/newloadsTesting/blob/73f06a02cbc738639a279486f7dbbbc2c3e039ce/lib/scripts/Programs.psm1#L1) downloads Google Chrome, VLC Media Player, Acrobat Reader, and Zoom
+- [Get-Programs](https://github.com/circlol/newloadsTesting/blob/73f06a02cbc738639a279486f7dbbbc2c3e039ce/lib/scripts/Programs.psm1#L1) downloads [Google Chrome](https://www.google.com/chrome/), [VLC Media Player](https://www.videolan.org/), [Acrobat Reader](https://get.adobe.com/reader/), and [Zoom](https://zoom.us)
 - ~~[^]: Use -SkipPrograms to skip installing these apps.~~
-- [^]: Also installs H.265 Codec from Device Manufacturer and UBlock Origin into Chrome
+- [^]: Also installs [H.265 Codec from Device Manufacturer](https://apps.microsoft.com/detail/9pmmsr1cgpwg) and [UBlock Origin](https://ublockorigin.com/) into Chrome
 - [Set-Visuals](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/Visuals.psm1#L1) applies a wallpaper, sets to stretch and changes system to light mode
 - [Set-Branding](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/Branding.psm1#L1) sets Mother Computer's support info     _Seen in Settings -> About Your PC_
 - [Set-StartMenu](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/StartMenu.psm1#L1) applies a taskbar layout then a  custom start menu layout in 11 and clears pinned tiles in 10. 
-- [Debloat](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/Debloat.psm1#L1) checks common Win32 Programs, UWP bloat, Start Menu Ads (Internet Shortcuts) and removes them
+- List of [Debloat](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/Debloat.psm1#L1) checks for common bloatware and attempts removal
 
-- <details>
-    <summary>Click to Expand for a list of Debloat Apps</summary>
-  ###### _To make suggestions submit a change or send an email to newloads@shaw.ca_
+- [Get-Office](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/Office.psm1#L1) checks for any installed version of Office and prompts user for removal. Simple yes or no to remove all versions.
 
+  [^]: Uses Microsoft [SaRACmd](https://aka.ms/SaRA_EnterpriseVersionFiles) to remove Office
 
-  ```powershell
-  #        Win32
-  "Avast"
-  "ExpressVPN"
-  "McAfee"
-  "Norton"
-  "WildTangent Games"
-  
-  #        Internet Shortcuts
-  "Adobe Offers"
-  "Amazon"
-  "Booking.com"
-  "ExpressVPN"
-  "Forge Of Empires"
-  "*Free Trials*"
-  "Planet9 Link"
-  "Utomik"
-  
-  #        UWP
-  # Microsoft Applications
-  "Microsoft.549981C3F5F10"                   			# Cortana
-  "Microsoft.3DBuilder"                       			# 3D Builder
-  "Microsoft.Appconnector"                    			# App Connector
-  "Microsoft.BingFinance"                     			# Finance
-  "Microsoft.BingFoodAndDrink"                			# Food And Drink
-  "Microsoft.BingHealthAndFitness"            			# Health And Fitness
-  "Microsoft.BingNews"                        			# News
-  "Microsoft.BingSports"                      			# Sports
-  "Microsoft.BingTranslator"                  			# Translator
-  "Microsoft.BingTravel"                      			# Travel
-  "Microsoft.BingWeather"                     			# Weather
-  "Microsoft.CommsPhone"                      			# Your Phone
-  "Microsoft.ConnectivityStore"               			# Connectivity Store
-  "Microsoft.Messaging"                       			# Messaging
-  "Microsoft.Microsoft3DViewer"               			# 3D Viewer
-  "Microsoft.MicrosoftOfficeHub"              			# Office
-  "Microsoft.MicrosoftPowerBIForWindows"      			# Power Automate
-  "Microsoft.MicrosoftSolitaireCollection"    			# MS Solitaire
-  "Microsoft.MinecraftEducationEdition"       			# Minecraft Education Edition for Windows 10
-  "Microsoft.MinecraftUWP"                    			# Minecraft
-  "Microsoft.MixedReality.Portal"             			# Mixed Reality Portal
-  "Microsoft.Office.Hub"                     	 			# Office Hub
-  "Microsoft.Office.Lens"                     			# Office Lens
-  "Microsoft.Office.OneNote"                  			# Office One Note
-  "Microsoft.Office.Sway"                     			# Office Sway
-  "Microsoft.OneConnect"                     				# OneConnect
-  "Microsoft.People"                          			# People
-  "Microsoft.SkypeApp"                        			# Skype
-  "MicrosoftTeams"                            			# Teams / Preview
-  "Microsoft.Todos"                           			# To Do
-  "Microsoft.Wallet"                          			# Wallet
-  "Microsoft.Whiteboard"                      			# Microsoft Whiteboard
-  "Microsoft.WindowsPhone"                    			# Your Phone Alternate
-  "Microsoft.WindowsReadingList"              			# Reading List
-  "Microsoft.ZuneMusic"                       			# Groove Music 
-  "Microsoft.ZuneVideo"                       			# Movies & TV
-  #          3rd party Apps
-  "*AdobePhotoshopExpress*"                   			# Adobe Photoshop Express
-  "AdobeSystemsIncorporated.AdobeLightroom"   			# Adobe Lightroom
-  "AdobeSystemsIncorporated.AdobeCreativeCloudExpress"    # Adobe Creative Cloud Express
-  "AdobeSystemsIncorporated.AdobeExpress"    				# Adobe Creative Cloud Express
-  "*Amazon.com.Amazon*"                       			# Amazon
-  "AmazonVideo.PrimeVideo"                    			# Amazon Prime Video
-  "57540AMZNMobileLLC.AmazonAlexa"            			# Amazon Alexa
-  "*BubbleWitch3Saga*"                        			# Bubble Witch 3 Saga
-  "*CandyCrush*"                              			# Candy Crush
-  "Clipchamp.Clipchamp"                       			# Clip Champ
-  "*DisneyMagicKingdoms*"                     			# Disney Magic Kingdom
-  "Disney.37853FC22B2CE"                      			# Disney Plus
-  "*Disney*"                                  			# Disney Plus
-  "*Dolby*"                                   			# Dolby Products (Like Atmos)
-  "*DropboxOEM*"                              			# Dropbox
-  "Evernote.Evernote"                         			# Evernote
-  "*ExpressVPN*"                              			# ExpressVPN
-  "*Facebook*"                                			# Facebook
-  "*Flipboard*"                               			# Flipboard
-  "*Hulu*"                                    			# Hulu
-  "*Instagram*"                               			# Instagram
-  "*McAfee*"                                  			# McAfee
-  "5A894077.McAfeeSecurity"                   			# McAfee Security
-  "4DF9E0F8.Netflix"                          			# Netflix
-  "*PicsArt-PhotoStudio*"                     			# PhotoStudio
-  "*Pinterest*"                               			# Pinterest
-  "142F4566A.147190D3DE79"                    			# Pinterest
-  "1424566A.147190DF3DE79"                    			# Pinterest
-  "SpotifyAB.SpotifyMusic"                    			# Spotify
-  "*Twitter*"                                 			# Twitter
-  "*TikTok*"                                  			# TikTok
-  "5319275A.WhatsAppDesktop"                  			# WhatsApp
-  
-  #         Acer OEM Bloat
-  "AcerIncorporated.AcerRegistration"         			# Acer Registration
-  "AcerIncorporated.QuickAccess"              			# Acer Quick Access
-  "AcerIncorporated.UserExperienceImprovementProgram"     # Acer User Experience Improvement Program
-  "AcerIncorporated.AcerCollectionS"          			# Acer Collections 
-  
-  #         HP Bloat
-  "AD2F1837.HPPrivacySettings"                			# HP Privacy Settings
-  "AD2F1837.HPInc.EnergyStar"                 			# Energy Star
-  "AD2F1837.HPAudioCenter"                    			# HP Audio Center
-  
-  #         Common HP & Acer Bloat
-  "CyberLinkCorp.ac.PowerDirectorforacerDesktop"          # CyberLink Power Director for Acer
-  "CorelCorporation.PaintShopPro"                         # Coral Paint Shop Pro
-  "26720RandomSaladGamesLLC.HeartsDeluxe"                 # Hearts Deluxe
-  "26720RandomSaladGamesLLC.SimpleSolitaire"              # Simple Solitaire
-  "26720RandomSaladGamesLLC.SimpleMahjong"                # Simple Mahjong
-  "26720RandomSaladGamesLLC.Spades"                       # Spades
-  ```
+- [General tweaks](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/GeneralTweaks.psm1#L1) does things like removes chat, Cortana from the taskbar, changes search into an icon, expands explorer ribbon, enables compact view, ect. General Tweaks
 
+- [Performance tweaks](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/Performance.psm1#L1) tweaks such as assuring game mode is enabled, sets hover time to 10ms for right click, games/multimedia usage set to 100%, enables hardware accelerated GPU scheduling, disables Edge startup boost.
 
-
-- [Get-Office](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/Office.psm1#L1) checks for any installed version of Office and prompts user for removal
-
-  [^]: Uses Microsoft SaRACmd to remove Office
-
-- [General tweaks](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/GeneralTweaks.psm1#L1) does things like removes chat, cortana from the taskbar, changes search into an icon, expands explorer ribbon, enables compact view, ect. General Tweaks
-
-- [Performance tweaks](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/Performance.psm1#L1) sets a few things to the max, for example games/multimedia usage set to 100%, enables hardware accelerated gpu scheduling, and more.
-
-- [Privacy tweaks](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/Privacy.psm1#L2) disables a surprisingly large amount of tracking and telemetry.
+- [Privacy tweaks](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/Privacy.psm1#L2) disables a surprisingly large amount of tracking and telemetry, sets CloudFlare as default DNS provider, disables sending diagnostic data to Microsoft. 
 
 - [Security tweaks](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/Security.psm1#L2) applies various patches and exploit protections
 
 - [Services](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/Services.psm1#L1C10-L1C18) are optimized - listed below are all the services that are disabled
 
-	Disabled
-
-  ```powershell
-  "DiagTrack"			# DEFAULT: Automatic | Connected User Experiences and Telemetry
-  "diagnosticshub.standardcollector.service"  # DEFAULT: Manual | Microsoft (R) Diagnostics Hub Standard Collector Service  Application Protocol (WAP)
-  "GraphicsPerfSvc"   # DEFAULT: Manual    | Graphics performance monitor service
-  "HomeGroupListener" # NOT FOUND (Win 10+)| HomeGroup Listener
-  "HomeGroupProvider" # NOT FOUND (Win 10+)| HomeGroup Provider
-  "lfsvc"         # DEFAULT: Manual    | Geolocation Service
-  "MapsBroker"    # DEFAULT: Automatic | Downloaded Maps Manager
-  "PcaSvc"        # DEFAULT: Automatic | Program Compatibility Assistant (PCA)
-  "RemoteAccess"  # DEFAULT: Disabled  | Routing and Remote Access
-  "RemoteRegistry"# DEFAULT: Disabled  | Remote Registry
-  "RetailDemo"    # DEFAULT: Manual    | The Retail Demo Service controls device activity while the device is in retail demo mode.
-  "TrkWks"        # DEFAULT: Automatic | Distributed Link Tracking Client
-  "WSearch"       # DEFAULT: Automatic | Windows Search (100% Disk usage on HDDs)
-  "NPSMSvc_df772"
-  "LanmanServer"	
-  ```
-
-​		Manual
-
-  ```powershell
-  "BITS"                           # DEFAULT: Manual    | Background Intelligent Transfer Service
-  "BDESVC"                         # DEFAULT: Manual    | BItLocker Drive Encryption Service
-  "edgeupdate"                     # DEFAULT: Automatic | Microsoft Edge Update Service
-  "edgeupdatem"                    # DEFAULT: Manual    | Microsoft Edge Update Service²
-  "FontCache"                      # DEFAULT: Automatic | Windows Font Cache
-  "iphlpsvc"                       # DEFAULT: Automatic | IP Helper Service (IPv6 (6to4, ISATAP, Port Proxy and Teredo) and IP-HTTPS)
-  "lmhosts"                        # DEFAULT: Manual    | TCP/IP NetBIOS Helper
-  "ndu"                            # DEFAULT: Automatic | Windows Network Data Usage Monitoring Driver (Shows network usage per-process on Task Manager)
-  "PhoneSvc"                       # DEFAULT: Manual    | Phone Service (Manages the telephony state on the device)
-  "SCardSvr"                       # DEFAULT: Manual    | Smart Card Service
-  "SharedAccess"                   # DEFAULT: Manual    | Internet Connection Sharing (ICS)
-  "stisvc"                         # DEFAULT: Automatic | Windows Image Acquisition (WIA) Service
-  "WbioSrvc"                       # DEFAULT: Manual    | Windows Biometric Service (required for Fingerprint reader / Facial detection)
-  "Wecsvc"                         # DEFAULT: Manual    | Windows Event Collector Service
-  "WerSvc"                         # DEFAULT: Manual    | Windows Error Reporting Service
-  "wisvc"                          # DEFAULT: Manual    | Windows Insider Program Service
-  "WMPNetworkSvc"                  # DEFAULT: Manual    | Windows Media Player Network Sharing Service
-  "WpnService"                     # DEFAULT: Automatic | Windows Push Notification Services (WNS)
-  # - Diagnostic Services
-  "DPS"                            # DEFAULT: Automatic | Diagnostic Policy Service
-  "WdiServiceHost"                 # DEFAULT: Manual    | Diagnostic Service Host
-  "WdiSystemHost"                  # DEFAULT: Manual    | Diagnostic System Host
-  # - Bluetooth services
-  "BTAGService"                    # DEFAULT: Manual    | Bluetooth Audio Gateway Service
-  "BthAvctpSvc"                    # DEFAULT: Manual    | AVCTP Service
-  "bthserv"                        # DEFAULT: Manual    | Bluetooth Support Service
-  "RtkBtManServ"                   # DEFAULT: Automatic | Realtek Bluetooth Device Manager Service
-  # - Xbox services
-  "XblAuthManager"                 # DEFAULT: Manual    | Xbox Live Auth Manager
-  "XblGameSave"                    # DEFAULT: Manual    | Xbox Live Game Save
-  "XboxGipSvc"                     # DEFAULT: Manual    | Xbox Accessory Management Service
-  "XboxNetApiSvc"                  # DEFAULT: Manual    | Xbox Live Networking Service
-  # - 3rd Party Services
-  "gupdate"                        # DEFAULT: Automatic | Google Update Service
-  "gupdatem"                       # DEFAULT: Manual    | Google Update Service²
-  "DisplayEnhancementService"      # DEFAULT: Manual    | A service for managing display enhancement such as brightness control.
-  "DispBrokerDesktopSvc"           # DEFAULT: Automatic | Manages the connection and configuration of local and remote displays
-  ```
-
 -  Changes to the [task scheduler](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/TaskScheduler.psm1#L2) are mostly tracking related but are also listed below
 
-  Enabled
-  
-  ```powershell
-  "\Microsoft\Windows\Defrag\ScheduledDefrag"
-  "\Microsoft\Windows\Maintenance\WinSAT"
-  "\Microsoft\Windows\RecoveryEnvironment\VerifyWinRE"
-  "\Microsoft\Windows\Windows Error Reporting\QueueReporting"
-  ```
-  
-  Disabled
-  
-  ```powershell
-  "\Microsoft\Office\OfficeTelemetryAgentLogOn"
-  "\Microsoft\Office\OfficeTelemetryAgentFallBack"
-  "\Microsoft\Office\Office 15 Subscription Heartbeat"
-  "\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser"
-  "\Microsoft\Windows\Application Experience\ProgramDataUpdater"
-  "\Microsoft\Windows\Application Experience\StartupAppTask"
-  "\Microsoft\Windows\Autochk\Proxy"
-  "\Microsoft\Windows\Customer Experience Improvement Program\Consolidator"         
-  "\Microsoft\Windows\Customer Experience Improvement Program\KernelCeipTask"       
-  "\Microsoft\Windows\Customer Experience Improvement Program\Uploader"
-  "\Microsoft\Windows\Customer Experience Improvement Program\UsbCeip"              
-  "\Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector"
-  "\Microsoft\Windows\Location\Notifications"                                       
-  "\Microsoft\Windows\Location\WindowsActionDialog"                                 
-  "\Microsoft\Windows\Maps\MapsToastTask"                                           
-  "\Microsoft\Windows\Maps\MapsUpdateTask"                                          
-  "\Microsoft\Windows\Mobile Broadband Accounts\MNO Metadata Parser"                
-  "\Microsoft\Windows\Power Efficiency Diagnostics\AnalyzeSystem"                   
-  "\Microsoft\Windows\Retail Demo\CleanupOfflineContent"                            
-  "\Microsoft\Windows\Shell\FamilySafetyMonitor"                                    
-  "\Microsoft\Windows\Shell\FamilySafetyRefreshTask"                                
-  "\Microsoft\Windows\Shell\FamilySafetyUpload"
-  "\Microsoft\Windows\Windows Media Sharing\UpdateLibrary"    
-  ```
-
-
-- [Optional Features](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/OptionalFeatures.psm1#L1C10-L1C18) removes old legacy features
-
-###### 		 _To make suggestions submit a change or send an email to newloads@shaw.ca_
-
-​		Disabled
-
-  ```powershell
-  "IIS-*"                                # Internet Information Services
-  "Internet-Explorer-Optional-*"         # Internet Explorer
-  "LegacyComponents"                     # Legacy Components
-  "MediaPlayback"                        # Media Features (Windows Media Player)
-  "MicrosoftWindowsPowerShellV2"         # PowerShell 2.0
-  "MicrosoftWindowsPowershellV2Root"     # PowerShell 2.0
-  "Printing-XPSServices-Features"        # Microsoft XPS Document Writer
-  "WorkFolders-Client"                   # Work Folders Client
-  ```
-
+  - [Optional Features](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/OptionalFeatures.psm1#L1C10-L1C18) removes old legacy features
 
 - Disables [Bitlocker](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/Start-BitLockerDecryption.psm1#L1C10-L1C18) on the system
 
-  ~~[^]: Use switch `-SkipBitlocker` to avoid this feature~~
-
-
 - [Restore point](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/New-SystemRestorePoint.psm1#L1C10-L1C18) is created at the end
 - Script [Cleanup](https://github.com/circlol/newloadsTesting/blob/48d061e9e1352ad0cebe9d7b2dc0dbbcc0f20514/lib/scripts/Cleanup.psm1#L1C1-L1C1)
+
 ​	</details>
-</details>
+
 ## Documentation
 
 [Documentation](https://linktodocumentation)
