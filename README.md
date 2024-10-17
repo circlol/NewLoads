@@ -12,20 +12,20 @@ Running New Loads is as simple as:
 2) Type in run command for version you want
 
 <h5>Main Branch:</h5>
-```powershell
+```
 irm run.newloads.ca | iex
 ```
 or
-```powershell
+```
 iwr -useb run.newloads.ca | iex
 ```
 
 <h5>Beta Branch:</h5>
-```powershell
+```
 irm beta.newloads.ca | iex
 ```
 or
-```powershell
+```
 iwr -useb beta.newloads.ca | iex
 ```
 
