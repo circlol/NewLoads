@@ -1431,10 +1431,11 @@ function Get-MissingDriver {
 	} else {
 		Write-Status "Drivers are missing." "!!"
 		Write-Output $drivers
-		$q = Show-Question -Prompt "`nThere are drivers missing. Please fix them before continuing.`n`n Skip Warning?"
+		$q = Show-Question -Buttons YesNo -Message "`nThere are drivers missing. Please fix them before continuing.`n`n Skip Warning?" -Icon Information
 		write-output $q | out-null
 		If ($q = $true) {
-			Write-Caption "Naughty naughty."
+			Show-Question -Buttons Ok -Message "Naughty naughty.. Go download the driver." -Icon None
+			exit
 		} else {
 			exit
 		}
