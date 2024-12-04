@@ -1,12 +1,38 @@
-﻿
-#.NOTES
-# Author         : Circlol
-# GitHub         : https://github.com/Circlol/NewLoads
-# Version        : 1.08.03_beta
-
+﻿#region Initialization
+<# FOR USE OF PARAMETERS REMOVE OR COMMENT OUT THIS LINE AND THE ONE BELOW
+[CmdletBinding(SupportsShouldProcess = $true)]
+param (
+	[Alias("NR")]
+	[Switch]$NoRestart = $false,
+	[Alias("ADW")]
+	[Switch]$AdwCleaner = $false,
+	[Alias("BL")]
+	[Switch]$SkipBitlocker = $false,
+	[Alias("BR")]
+	[Switch]$SkipBranding = $false,
+	[Alias("CL")]
+	[Switch]$SkipCleanup = $false,
+	[Alias("D")]
+	[Switch]$SkipDebloat = $false,
+	[Alias("P")]
+	[Switch]$SkipPrograms = $false,
+	[Alias("RP")]
+	[Switch]$SkipRestorePoint = $false,
+	[Alias("O")]
+	[Switch]$SkipOptimization = $false,
+	[Alias("U")]
+	[Switch]$Undo = $false
+)
+REMOVE OR COMMENT OUT THIS LINE AS WELL #> 
+#endregion
 #region Beginning
 
 <##############################################################################################################
+
+#.NOTES
+# Author         : Circlol
+# GitHub         : https://github.com/Circlol/NewLoads
+# Version        : 1.08.02
 
 #	Changelog: 
 
@@ -48,7 +74,6 @@
 	- Added Show-SkipQuestion function
 	- Added a driver check to assure everything is in. Under function Get-MissingDriver
 	- Added a search for timezone on local system matching specified zone.
-	- 
 
 # 1.08
 	- Adjusted custom Write- functions to calculate current width and fill/center in terminal
@@ -58,41 +83,13 @@
    	- Write-Title, Write-Break, Write-TitleCounter, Write-Section all center text based off current window width
 
 ##############################################################################################################>
-
-[CmdletBinding(SupportsShouldProcess = $true)]
-param (
-	[Alias("NR")]
-	[Switch]$NoRestart = $false,
-	[Alias("ADW")]
-	[Switch]$AdwCleaner = $false,
-	[Alias("BL")]
-	[Switch]$SkipBitlocker = $false,
-	[Alias("BR")]
-	[Switch]$SkipBranding = $false,
-	[Alias("CL")]
-	[Switch]$SkipCleanup = $false,
-	[Alias("D")]
-	[Switch]$SkipDebloat = $false,
-	[Alias("P")]
-	[Switch]$SkipPrograms = $false,
-	[Alias("RP")]
-	[Switch]$SkipRestorePoint = $false,
-	[Alias("O")]
-	[Switch]$SkipOptimization = $false,
-	[Alias("U")]
-	[Switch]$Undo = $false
-)
-
 Clear-Host
-
 $ErrorActionPreference = [System.Management.Automation.ActionPreference]::SilentlyContinue
-
-Add-Type -AssemblyName System.Windows.Forms
-Add-Type -AssemblyName System.Drawing
-
+#[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 [Console]::Title = "New Loads"
 [Console]::ForegroundColor = "White"
 [Console]::BackgroundColor = 'Black'
+$VerbosePreference = $False
 $Params = @()
 $NewLoads = [System.IO.DirectoryInfo]::new("$Env:temp\New Loads")
 $NewLoadsExists = Test-Path $NewLoads -ErrorAction SilentlyContinue
@@ -103,22 +100,22 @@ Clear-Host
 #endregion
 #region Variables
 $Variables = @{
-	"ProgramVersion"  			= "v1.08.02-beta"
-	"LastUpdate" 	   			= "2024/09/06"
-	
-	
-	"ForegroundColor"  			= "White"
+	"ProgramVersion"  			= "v1.08.02"
+	"LastUpdate" 	   			= "03/12/2024"
+	"NewLoadsURL"				= "run.newloads.ca"
+	"Creator"					= "Mike Ivison"
+	"TextColor"		  			= "Yellow"
 	"BackgroundColor"  			= "Black"
-	"AccentColor1"	   			= "Magenta"
+	"AccentColor1"	   			= "Blue"
 	"AccentColor2"	   			= "White"
-	"AccentColor3"	   			= "DarkMagenta"
-	"LogoColor"	       			= "Magenta"
+	"AccentColor3"	   			= "Cyan"
+	"LogoColor"	       			= "Yellow"
 	
 	"Time"			   			= Get-Date -UFormat %Y%m%d
 	"MaxTime"		   			= 250101
 	"MinTime"		   			= 240710
 	"Counter"		  			= 1
-	"MaxLength"	       			= 9
+	"MaxLength"	       			= 10
 	"Win11"		       			= 22000
 	"Win22H2"		   			= 22621
 	"Win23H2"		   			= 22631
@@ -126,8 +123,9 @@ $Variables = @{
 	"BuildNumber"	   			= [System.Environment]::OSVersion.Version.Build
 	"OSVersion"	       			= (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
 	"Connected"	      			= "Internet"
-	"StartBin"					= "$newloads\start2.bin"
+	
 	# Local File Paths
+	"StartBin"					= "$newloads\start2.bin"
 	"StartBinDefault"  			= "$Env:SystemDrive\Users\Default\AppData\Local\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState"
 	"StartBinCurrent"  			= [System.IO.DirectoryInfo]::new("$Env:LocalAppData\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState")
 	"LayoutFile"	   			= [System.IO.DirectoryInfo]::new("$Env:LocalAppData\Microsoft\Windows\Shell\LayoutModification.xml")
@@ -144,13 +142,14 @@ $Variables = @{
 	
 	# - Shortcuts
 	"Shortcuts"	       			= @(
-					      		  [System.IO.DirectoryInfo]::new("$Env:USERPROFILE\Desktop\Microsoft Edge.lnk")
-								  [System.IO.DirectoryInfo]::new("$Env:PUBLIC\Desktop\Microsoft Edge.lnk")
-								  [System.IO.DirectoryInfo]::new("$Env:PUBLIC\Desktop\Adobe Reader.lnk")
-								  [System.IO.DirectoryInfo]::new("$Env:PUBLIC\Desktop\Acrobat Reader DC.lnk")
-								  [System.IO.DirectoryInfo]::new("$Env:PUBLIC\Desktop\VLC Media Player.lnk")
-								  [System.IO.DirectoryInfo]::new("$Env:PUBLIC\Desktop\Zoom.lnk")
-	)
+								[System.IO.DirectoryInfo]::new("$Env:USERPROFILE\Desktop\Microsoft Edge.lnk")
+								[System.IO.DirectoryInfo]::new("$Env:PUBLIC\Desktop\Microsoft Edge.lnk")
+								[System.IO.DirectoryInfo]::new("$Env:PUBLIC\Desktop\Adobe Reader.lnk")
+								[System.IO.DirectoryInfo]::new("$Env:PUBLIC\Desktop\Acrobat Reader DC.lnk")
+								[System.IO.DirectoryInfo]::new("$Env:PUBLIC\Desktop\VLC Media Player.lnk")
+								[System.IO.DirectoryInfo]::new("$Env:PUBLIC\Desktop\Zoom.lnk")
+								)
+	
 	"MAS"			   			= "mas.newloads.ca"
 	
 
@@ -187,7 +186,6 @@ $Variables = @{
 	
 	
 	"EnableServicesOnSSD" = @("SysMain", "WSearch")
-
 }
 $Errors = @{
 	"errorMessage1"   = "
@@ -234,6 +232,27 @@ $Errors = @{
                                                                       (__(__)___(__)__)          `n`n"
 }
 $OptionalFeatures = @{
+	$SleepSettings = @(
+		"Monitor-Timeout-AC $Variables.TimeoutScreenPluggedIn",
+		"Monitor-Timeout-DC $Variables.TimeoutScreenBattery",
+		"Standby-Timeout-AC $Variables.TimeoutStandByPluggedIn",
+		"Standby-Timeout-DC $Variables.TimeoutStandByBattery",
+		"Disk-Timeout-AC $Variables.TimeoutDiskPluggedIn",
+		"Disk-Timeout-DC $Variables.TimeoutDiskBattery",
+		"Hibernate-Timeout-AC $Variables.TimeoutHibernatePluggedIn",
+		"Hibernate-Timeout-DC $Variables.TimeoutHibernateBattery"
+	)
+
+	$SleepText = @(
+		"Monitor Timeout to AC: $($Variables.TimeoutScreenPluggedIn)",
+		"Monitor Timeout to DC: $($Variables.TimeoutScreenBattery)",
+		"Standby Timeout to AC: $($Variables.TimeoutStandByPluggedIn)",
+		"Standby Timeout to DC: $($Variables.TimeoutStandByBattery)",
+		"Disk Timeout to AC: $($Variables.TimeoutDiskPluggedIn)",
+		"Disk Timeout to DC: $($Variables.TimeoutDiskBattery)",
+		"Hibernate Timeout to AC: $($Variables.TimeoutHibernatePluggedIn)",
+		"Hibernate Timeout to DC: $($Variables.TimeoutHibernateBattery)"
+	)
 	# - Optional Features
 	"ToDisable"													    = @(
 		#"FaxServicesClientPackage"             # Windows Fax and Scan
@@ -254,7 +273,9 @@ $OptionalFeatures = @{
 	)
 }
 $Registry = @{
+
 	# Initialize all Path variables used to Registry Tweaks
+	"TaskBarEndTask"							= "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\TaskbarDeveloperSettings"
 	"EdgeUI" 									= "HKCU:\Software\Policies\Microsoft\Windows\EdgeUI"
 	"PathToLMCurrentVersion"					= "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion"
 	"PathToLMOldDotNet"							= "HKLM:\SOFTWARE\Microsoft\.NETFramework\v4.0.30319"
@@ -262,7 +283,8 @@ $Registry = @{
 	"PathToLMConsentStoreAD"					= "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appDiagnostics"
 	"PathToLMConsentStoreUAI"					= "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\userAccountInformation"
 	"SecurityPath"								= "HKLM:\SOFTWARE\Policies\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BLOCK_CROSS_PROTOCOL_FILE_NAVIGATION"
-	"RegCAM"									= "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location"
+	"RegLocationLM"								= "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location"
+	"RegLocationCU"								= "HKCU:\Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location"
 	"PathToLMConsentStoreUN"					= "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\userNotificationListener"
 	"PathToLMDeviceMetaData"					= "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Device Metadata"
 	"PathToLMEventKey"							= "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Diagnostics\DiagTrack\EventTranscriptKey"
@@ -274,7 +296,7 @@ $Registry = @{
 	"PathToLMPoliciesSystem"					= "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
 	"PathToLMWindowsTroubleshoot"				= "HKLM:\SOFTWARE\Microsoft\WindowsMitigation"
 	"PathToLMMultimediaSystemProfile"			= "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile"
-	"PathToLMMultimediaSystemProfileOnGameTasks" = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games"
+	"PathToLMMultimediaSystemProfileOnGameTask" = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games"
 	"PathToLMPoliciesEdge"						= "HKLM:\SOFTWARE\Policies\Microsoft\Edge"
 	"PathToLMPoliciesMRT"						= "HKLM:\SOFTWARE\Policies\Microsoft\MRT"
 	"PathToLMPoliciesPsched"					= "HKLM:\SOFTWARE\Policies\Microsoft\Psched"
@@ -432,11 +454,8 @@ $Services = @{
 		"diagnosticshub.standardcollector.service" 		# DEFAULT: Manual    | Microsoft (R) Diagnostics Hub Standard Collector Service
 		"dmwappushservice" 								# DEFAULT: Manual    | Device Management Wireless Application Protocol (WAP)
 		"BthAvctpSvc" 									# DEFAULT: Manual    | AVCTP Service - This is Audio Video Control Transport Protocol service
-		#"Fax"                                           # DEFAULT: Manual    | Fax Service
 		"fhsvc" 										# DEFAULT: Manual    | Fax History Service
 		"GraphicsPerfSvc" 								# DEFAULT: Manual    | Graphics performance monitor service
-		#"HomeGroupListener"                         	# NOT FOUND (Win 10+)| HomeGroup Listener
-		#"HomeGroupProvider"                         	# NOT FOUND (Win 10+)| HomeGroup Provider
 		"lfsvc" 										# DEFAULT: Manual    | Geolocation Service
 		"MapsBroker" 									# DEFAULT: Automatic | Downloaded Maps Manager
 		"PcaSvc" 										# DEFAULT: Automatic | Program Compatibility Assistant (PCA)
@@ -444,7 +463,7 @@ $Services = @{
 		"RemoteRegistry" 								# DEFAULT: Disabled  | Remote Registry
 		"RetailDemo" 									# DEFAULT: Manual    | The Retail Demo Service controls device activity while the device is in retail demo mode.
 		"SysMain" 										# DEFAULT: Automatic | SysMain / Superfetch (100% Disk usage on HDDs)
-		# read://https_helpdeskgeek.com/?url=https%3A%2F%2Fhelpdeskgeek.com%2Fhelp-desk%2Fdelete-disable-windows-prefetch%2F%23%3A~%3Atext%3DShould%2520You%2520Kill%2520Superfetch%2520(Sysmain)%3F
+		# read https://helpdeskgeek.com/?url=https://helpdeskgeek.com/help-desk/delete-disable-windows-prefetch/text%3DShould/520You/520Kill/520Superfetch/520(Sysmain)%3F
 		"TrkWks" 										# DEFAULT: Automatic | Distributed Link Tracking Client
 		"WSearch" 										# DEFAULT: Automatic | Windows Search (100% Disk usage on HDDs)
 		# - Services which cannot be disabled (and shouldn't)
@@ -725,7 +744,7 @@ $Visuals = @{
 #endregion
 #region Functions
 #region Formatting
-Function Get-Status {
+function Get-Status {
 	<#
 .SYNOPSIS
 This function is used to get the status of a log entry and perform actions based on the status.
@@ -754,7 +773,8 @@ This function is used to get the status of a log entry and perform actions based
 		Stop-Transcript | Write-ModifiedStatus -Types "STOPPING" -Status "Stopping Transcript"
 	}
 	If ($WriteToLog) {
-		$LogEntries | Out-File $Variables.Log -NoClobber
+		Add-Content -Path $Variables.Log -Value "New Loads Log $date $time"
+		$LogEntries | Out-File $Variables.Log -NoClobber -Append
 	}
 	If ($? -eq $True) {
 		# Write a success message
@@ -763,8 +783,6 @@ This function is used to get the status of a log entry and perform actions based
 		If (!$SkipLogEntry) {
 			# Marks entry as successful
 			$LogEntry.Successful = $true
-			# Modified - Writes in bulk to a variable
-			#$Global:LogEntries += $LogEntry
 			Add-Content -Path $Variables.Log -Value $logEntry
 		}
 		
@@ -774,71 +792,10 @@ This function is used to get the status of a log entry and perform actions based
 		If (!$SkipLogEntry) {
 			# Marks entry as unsuccessful
 			$LogEntry.Successful = $false
-			# Marks error message into log entry
-			$LogEntry += @{ 'ErrorMessage' = $Error[0].Exception.Message }
-			# Modified - Writes in bulk to a variable
-			#$Global:LogEntries += $LogEntry
 			Add-Content -Path $Variables.Log -Value $logEntry
-			# Handle the error message
 			Get-Error $error[0].Exception.Message
 		}
 	}
-}
-function Show-ScriptLogo {
-	<#
-	.SYNOPSIS
-	Displays the New Loads initialization logo and information.
-	
-	.NOTES
-	Author: Circlol
-	Version: 1.0
-	History:
-		1.0:
-			- Started logging changes.
-	#>
-	$consoleWidth = [Console]::WindowWidth
-	$length = [Math]::Floor($consoleWidth / 2)
-	$padding = $length - ($Variables.Creator).Length - ($Variables.ProgramVersion).Length - ($Variables.LastUpdate).Length
-	$leftPadding = ' ' * [math]::Floor($padding)
-	
-	$logoWidth = 74 # Assuming the logo width is 74 characters
-	$logoPadding = ($consoleWidth - $logoWidth) / 2
-	$logoPadding = " " * [math]::Floor($logoPadding)
-	
-
-	
-	
-	Write-Host "`n`n`n"
-	$b = '▀' * [Console]::WindowWidth
-	Write-Host $b -NoNewLine -ForegroundColor $Variables.AccentColor1 -BackgroundColor $Variables.AccentColor3
-	Write-Host "`n`n"
-	$Logo = "
-$LogoPadding███╗   ██╗███████╗██╗    ██╗    ██╗      ██████╗  █████╗ ██████╗ ███████╗
-$LogoPadding████╗  ██║██╔════╝██║    ██║    ██║     ██╔═══██╗██╔══██╗██╔══██╗██╔════╝
-$LogoPadding██╔██╗ ██║█████╗  ██║ █╗ ██║    ██║     ██║   ██║███████║██║  ██║███████╗
-$LogoPadding██║╚██╗██║██╔══╝  ██║███╗██║    ██║     ██║   ██║██╔══██║██║  ██║╚════██║
-$LogoPadding██║ ╚████║███████╗╚███╔███╔╝    ███████╗╚██████╔╝██║  ██║██████╔╝███████║
-$LogoPadding╚═╝  ╚═══╝╚══════╝ ╚══╝╚══╝     ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═════╝ ╚══════╝`n"
-	Write-Host "$Logo`n`n`n$leftPadding" -NoNewline -ForegroundColor $Variables.LogoColor -BackgroundColor $Variables.BackgroundColor 
-	Write-Host "Created by " -NoNewLine -ForegroundColor White -BackgroundColor $Variables.BackgroundColor
-	Write-Host "$($Variables.Creator)    " -NoNewLine -ForegroundColor Red -BackgroundColor $Variables.BackgroundColor 
-	Write-Host "Version: " -NoNewLine -ForegroundColor White -BackgroundColor $Variables.BackgroundColor
-	Write-Host $($Variables.ProgramVersion) -NoNewline -ForegroundColor Green -BackgroundColor $Variables.BackgroundColor
-	Write-Host "   Last Update: " -NoNewLine -ForegroundColor White -BackgroundColor $Variables.BackgroundColor
-	Write-Host "$($Variables.LastUpdate)" -NoNewline -ForegroundColor Green -BackgroundColor $Variables.BackgroundColor
-	Write-Host "`n`n" -NoNewline
-	Write-Center "Notice: For best functionality, it is strongly suggested to update windows before running New Loads." -ForegroundColor $Variables.AccentColor3 -BackgroundColor $Variables.BackgroundColor
-	If ($Null -ne $Params) {
-	Write-Host "     Parameters Specified: " -NoNewLine -ForegroundColor $Variables.AccentColor2 -BackgroundColor $Variables.BackgroundColor
-		$Params | ForEach-Object {
-			Write-Host " -$_" -NoNewline -ForegroundColor $Variables.AccentColor2 -BackgroundColor $Variables.BackgroundColor
-		}
-		
-	}
-	Write-Host "`n`n`n"
-	Write-Host $b -BackgroundColor $Variables.AccentColor1 -ForegroundColor $Variables.AccentColor3
-	Write-Host "`n`n"
-	#Show-ScriptStatus -TitleText $null
 }
 function Write-Center {
 	param (
@@ -870,8 +827,9 @@ History:
 	$Width = [Console]::WindowWidth - 2
 	$line = "=" * $Width
 	Write-Host "`n`n[" -NoNewline -ForegroundColor $Variables.AccentColor1 -Backgroundcolor $Variables.BackgroundColor
-	Write-Host $line -NoNewLine -ForegroundColor White -BackgroundColor $Variables.BackgroundColor
-	Write-Host "]`n" -ForegroundColor $Variables.AccentColor1 -BackgroundColor $Variables.BackgroundColor
+	Write-Host $line -NoNewLine -ForegroundColor $Variables.AccentColor3 -BackgroundColor $Variables.BackgroundColor
+	Write-Host "]" -ForegroundColor $Variables.AccentColor1 -BackgroundColor $Variables.BackgroundColor
+	[System.Environment]::NewLine
 }
 Function Write-Caption {
 <#
@@ -940,17 +898,76 @@ History:
         - Started logging changes.
 #>
 	[CmdletBinding()]
+	[OutputType([String])]
 	param (
 		[String]$Text = "Example text"
 	)
 	Write-Host "[" -BackgroundColor $Variables.BackgroundColor -ForegroundColor $Variables.AccentColor1 -NoNewline
 	Write-Host " REMINDER " -BackgroundColor Red -ForegroundColor White -NoNewLine
 	Write-Host "]" -BackgroundColor $Variables.BackgroundColor -ForegroundColor $Variables.AccentColor1 -NoNewline
-	Write-Host ": $text`n"
+	Write-Host ": $text"
+	[System.Environment]::NewLine
 }
 function Write-Log {
 	$TableToOutput | Format-Table -Property "Time", "Successful", "Types", "Status" | Out-File $Variables.Log
 }
+function Write-Logo {
+	<#
+	.SYNOPSIS
+	Displays the New Loads initialization logo and information.
+	
+	.NOTES
+	Author: Circlol
+	Version: 1.0
+	History:
+		1.0:
+			- Started logging changes.
+	#>
+	$consoleWidth = [Console]::WindowWidth
+	$length = [Math]::Floor($consoleWidth / 2)
+	$padding = $length - ($Variables.Creator).Length - ($Variables.ProgramVersion).Length - ($Variables.LastUpdate).Length
+	$leftPadding = ' ' * [math]::Floor($padding)
+	$logoWidth = 74 # Assuming the logo width is 74 characters
+	$logoPadding = ($consoleWidth - $logoWidth) / 2
+	$logoPadding = " " * [math]::Floor($logoPadding)
+	
+
+	
+	
+	Write-Host "`n`n`n"
+	$b = '▀' * [Console]::WindowWidth
+	Write-Host $b -NoNewLine -ForegroundColor $Variables.AccentColor1 -BackgroundColor $Variables.AccentColor3
+	Write-Host "`n`n"
+	$Logo = "
+$LogoPadding███╗   ██╗███████╗██╗    ██╗    ██╗      ██████╗  █████╗ ██████╗ ███████╗
+$LogoPadding████╗  ██║██╔════╝██║    ██║    ██║     ██╔═══██╗██╔══██╗██╔══██╗██╔════╝
+$LogoPadding██╔██╗ ██║█████╗  ██║ █╗ ██║    ██║     ██║   ██║███████║██║  ██║███████╗
+$LogoPadding██║╚██╗██║██╔══╝  ██║███╗██║    ██║     ██║   ██║██╔══██║██║  ██║╚════██║
+$LogoPadding██║ ╚████║███████╗╚███╔███╔╝    ███████╗╚██████╔╝██║  ██║██████╔╝███████║
+$LogoPadding╚═╝  ╚═══╝╚══════╝ ╚══╝╚══╝     ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═════╝ ╚══════╝"
+	[System.Environment]::NewLine
+	Write-Host "$Logo`n`n`n$leftPadding" -NoNewline -ForegroundColor $Variables.LogoColor -BackgroundColor $Variables.BackgroundColor 
+	Write-Host "Created by " -NoNewLine -ForegroundColor White -BackgroundColor $Variables.BackgroundColor
+	Write-Host "$($Variables.Creator)    " -NoNewLine -ForegroundColor Red -BackgroundColor $Variables.BackgroundColor 
+	Write-Host "Version: " -NoNewLine -ForegroundColor White -BackgroundColor $Variables.BackgroundColor
+	Write-Host $($Variables.ProgramVersion) -NoNewline -ForegroundColor Green -BackgroundColor $Variables.BackgroundColor
+	Write-Host "   Last Update: " -NoNewLine -ForegroundColor White -BackgroundColor $Variables.BackgroundColor
+	Write-Host "$($Variables.LastUpdate)" -NoNewline -ForegroundColor Green -BackgroundColor $Variables.BackgroundColor
+	Write-Host "`n`n" -NoNewline
+	Write-Center "Notice: For best functionality, it is strongly suggested to update windows before running New Loads." -ForegroundColor $Variables.AccentColor3 -BackgroundColor $Variables.BackgroundColor
+	<#If ($Null -ne $Params) {
+	Write-Host "     Parameters Specified: " -NoNewLine -ForegroundColor $Variables.AccentColor2 -BackgroundColor $Variables.BackgroundColor
+		$Params | ForEach-Object {
+			Write-Host " -$_" -NoNewline -ForegroundColor $Variables.AccentColor2 -BackgroundColor $Variables.BackgroundColor
+		}
+		
+	}#>
+	Write-Host "`n`n`n"
+	Write-Host $b -BackgroundColor $Variables.AccentColor1 -ForegroundColor $Variables.AccentColor3
+	Write-Host "`n`n"
+	#Set-ScriptStatus -TitleText $null
+}
+
 Function Write-ModifiedStatus {
 	param (
 		[string]$Types,
@@ -996,17 +1013,16 @@ History:
 	$padding = [Console]::WindowWidth - $totalLength
 	$leftPadding = ' ' * [math]::Floor($padding / 2)
 	
-	
-	Write-Host "`n$leftPadding<" -NoNewline -ForegroundColor $Variables.AccentColor1 -BackgroundColor $Variables.BackgroundColor
-	Write-Host $break -NoNewline -ForegroundColor $Variables.AccentColor2 -BackgroundColor $Variables.BackgroundColor
+	[System.Environment]::NewLine
+	Write-Host "$leftPadding<" -NoNewline -ForegroundColor $Variables.AccentColor1 -BackgroundColor $Variables.BackgroundColor
+	Write-Host $break -NoNewline -ForegroundColor $Variables.AccentColor3 -BackgroundColor $Variables.BackgroundColor
 	Write-Host "] " -NoNewline -ForegroundColor $Variables.AccentColor1 -BackgroundColor $Variables.BackgroundColor
 	Write-Host "$Text " -NoNewline -ForegroundColor $Variables.AccentColor2 -BackgroundColor $Variables.BackgroundColor
 	Write-Host "[" -NoNewline -ForegroundColor $Variables.AccentColor1 -BackgroundColor $Variables.BackgroundColor
-	Write-Host $break -NoNewline -ForegroundColor $Variables.AccentColor2 -BackgroundColor $Variables.BackgroundColor
+	Write-Host $break -NoNewline -ForegroundColor $Variables.AccentColor3 -BackgroundColor $Variables.BackgroundColor
 	Write-Host ">" -ForegroundColor $Variables.AccentColor1 -BackgroundColor $Variables.BackgroundColor
 	#$TitleToLogFormat = "`n`n   $Text`n`n"
-	Add-Content -Path $Variables.Log -Value $TitleToLogFormat
-	
+	#Add-Content -Path $Variables.Log -Value $TitleToLogFormat
 }
 function Write-Status {
 	<#
@@ -1040,51 +1056,50 @@ function Write-Status {
 		[Switch]$NoNewLine,
 		[Parameter(Position = 5)]
 		[ValidateSet('Black', 'DarkBlue', 'DarkGreen', 'DarkCyan', 'DarkRed', 'DarkMagenta', 'DarkYellow', 'Gray', 'DarkGray', 'Blue', 'Green', 'Cyan', 'Red', 'Magenta', 'Yellow', 'White')]
-		[String]$ForegroundColorText = $Variables.ForegroundColor,
+		[String]$ForegroundColor = $Variables.TextColor,
 		[Parameter(Position = 6)]
 		[ValidateSet('Black', 'DarkBlue', 'DarkGreen', 'DarkCyan', 'DarkRed', 'DarkMagenta', 'DarkYellow', 'Gray', 'DarkGray', 'Blue', 'Green', 'Cyan', 'Red', 'Magenta', 'Yellow', 'White')]
-		[String]$BackgroundColorText = $Variables.BackgroundColor
+		[String]$BackgroundColor = $Variables.BackgroundColor
 	)
 	
-	If ($null -eq $ForegroundColorText) {
-		$ForegroundColorText = [Console]::ForegroundColor
+	If ($null -eq $ForegroundColor) {
+		$ForegroundColor = [Console]::ForegroundColor
 	}
-	If ($null -eq $BackgroundColorText) {
-		$BackgroundColorText = [Console]::BackgroundColor
+	If ($null -eq $BackgroundColor) {
+		$BackgroundColor = [Console]::BackgroundColor
 	}
 	
 	If ($WriteWarning -eq $True) {
-		$ForegroundColorText = "Yellow"
+		$ForegroundColor = "Yellow"
 	}
 	$time = (Get-Date).ToString("h:mm:ss tt")
 	If (!$NoLogEntry) {
-			
 		# Prints date in line, converts to Month Day Year Hour Minute Period
-		$LogEntry = [PSCustomObject]@{
-			Time	   = $time
+		$Global:LogEntry = [PSCustomObject]@{
+			Time = $time
 			Successful = $false
-			Types	   = $Types -join ', '
-			Status	   = $Status
+			Types = $Types -join ', '
+			Status = $Status
 		}
-		$Global:LogEntry = $LogEntry
+		$LogEntry | Out-Null
 	}
 
 	# Output the log entry to the console
-	Write-Host "$time " -NoNewline -ForegroundColor DarkGray -BackgroundColor $BackgroundColorText
+	Write-Host "$time " -NoNewline -ForegroundColor DarkGray -BackgroundColor $BackgroundColor
 	
 	
 	If ($WriteWarning) {
-		Write-Host $TweakType -NoNewline -ForegroundColor $ForegroundColorText -BackgroundColor $BackgroundColorText
-		Write-Host " ::Warning:: -> " -NoNewline -ForegroundColor $ForegroundColorText -BackgroundColor $BackgroundColorText
-		Write-Host $Status -ForegroundColor $ForegroundColorText -BackgroundColor $BackgroundColorText -NoNewline:$NoNewLine
+		Write-Host $TweakType -NoNewline -ForegroundColor $ForegroundColor -BackgroundColor $BackgroundColor
+		Write-Host " ::Warning:: -> " -NoNewline -ForegroundColor $ForegroundColor -BackgroundColor $BackgroundColor
+		Write-Host $Status -ForegroundColor $ForegroundColor -BackgroundColor $BackgroundColor -NoNewline:$NoNewLine
 	} Else { 
 		ForEach ($Type in $Types) {
-			Write-Host "$Type " -NoNewline -ForegroundColor $ForegroundColorText -BackgroundColor $BackgroundColorText
+			Write-Host "$Type " -NoNewline -ForegroundColor $ForegroundColor -BackgroundColor $BackgroundColor
 		}
 		
-		Write-Host $TweakType -NoNewline -ForegroundColor $Variables.AccentColor1 -BackgroundColor $BackgroundColorText
-		Write-Host " -> " -NoNewline -ForegroundColor $Variables.AccentColor1 -BackgroundColor $BackgroundColorText
-		Write-Host $Status -ForegroundColor $ForegroundColorText -BackgroundColor $BackgroundColorText -NoNewline:$NoNewLine
+		Write-Host $TweakType -NoNewline -ForegroundColor $Variables.AccentColor1 -BackgroundColor $BackgroundColor
+		Write-Host " -> " -NoNewline -ForegroundColor $Variables.AccentColor1 -BackgroundColor $BackgroundColor
+		Write-Host $Status -ForegroundColor $ForegroundColor -BackgroundColor $BackgroundColor -NoNewline:$NoNewLine
 	}
 	
 	
@@ -1114,14 +1129,12 @@ History:
 	$leftPadding = ' ' * [math]::Floor($padding / 2)
 	
 	Write-Host "`n`n$leftpadding<" -NoNewline -ForegroundColor $Variables.AccentColor1 -BackgroundColor $Variables.BackgroundColor
-	Write-Host $break -NoNewline -ForegroundColor White -BackgroundColor $Variables.BackgroundColor
+	Write-Host $break -NoNewline -ForegroundColor $Variables.AccentColor3 -BackgroundColor $Variables.BackgroundColor
 	Write-Host "] " -NoNewline -ForegroundColor $Variables.AccentColor1 -BackgroundColor $Variables.BackgroundColor
-	Write-Host "$Text " -NoNewline -ForegroundColor White -BackgroundColor $Variables.BackgroundColor
+	Write-Host "$Text " -NoNewline -ForegroundColor $Variables.TextColor -BackgroundColor $Variables.BackgroundColor
 	Write-Host "[" -NoNewline -ForegroundColor $Variables.AccentColor1 -BackgroundColor $Variables.BackgroundColor
-	Write-Host $break -NoNewline -ForegroundColor White -BackgroundColor $Variables.BackgroundColor
+	Write-Host $break -NoNewline -ForegroundColor $Variables.AccentColor3 -BackgroundColor $Variables.BackgroundColor
 	Write-Host ">`n`n" -ForegroundColor $Variables.AccentColor1 -BackgroundColor $Variables.BackgroundColor
-	
-	
 }
 Function Write-TitleCounter {
 <#
@@ -1152,7 +1165,7 @@ History:
 	Write-Host "$leftPadding(" -NoNewline -ForegroundColor $Variables.AccentColor1 -BackgroundColor $Variables.BackgroundColor
 	Write-Host " $($Counter)/$($Variables.MaxLength) " -NoNewline -ForegroundColor White -BackgroundColor $Variables.BackgroundColor
 	Write-Host ")" -NoNewline -ForegroundColor $Variables.AccentColor1 -BackgroundColor $Variables.BackgroundColor
-	Write-Host " | " -NoNewline -ForegroundColor White -BackgroundColor $Variables.BackgroundColor
+	Write-Host " | " -NoNewline -ForegroundColor $Variables.AccentColor2 -BackgroundColor $Variables.BackgroundColor
 	Write-Host "$Text" -ForegroundColor $Variables.AccentColor1 -BackgroundColor $Variables.BackgroundColor
 	Write-Break
 	#$TitleCounterLogFormat = "`n`n$break`n`n    ($Counter)/$($Variables.MaxLength)) | $Text`n`n$break`n"
@@ -1287,8 +1300,6 @@ Release Notes:
 	param (
 		[Parameter(Mandatory = $true, ValueFromPipeline = $true)]
 		$ErrorMessage
-		#[string]$ErrorLog = $Variables.Log
-		#[string]$ErrorLog = $Variables.Log
 		
 	)
 	process {
@@ -1299,7 +1310,8 @@ Release Notes:
 		$timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 		$scriptPath = $MyInvocation.MyCommand.Path
 		$userName = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
-		$errorString = @"
+		$errorString = "
+
 **********************************************************************
 $timestamp Executed by: $userName
 Command: $command
@@ -1310,9 +1322,9 @@ Error Message:
 $ErrorMessage
 **********************************************************************
 
-"@
+"
 		try {
-			Add-Content -Path $ErrorLog -Value $errorString
+			Add-Content -Path $Variables.Log -Value $errorString
 		} catch {
 			Write-Error "Error writing to log: $($_.Exception.Message)"
 		}
@@ -1383,6 +1395,7 @@ Release Notes:
 			Name		    = $_.GetValue("DisplayName")
 			Publisher	    = $_.GetValue("Publisher")
 			Version		    = $_.GetValue("DisplayVersion")
+			InstallDate     = $_.GetValue("InstallDate")
 			UninstallString = $_.GetValue("UninstallString")
 		}
 	} | Sort-Object -Property Name -Unique
@@ -1390,7 +1403,8 @@ Release Notes:
 function Get-MissingDriver {
 	[CmdletBinding()]
 	param ()
-	
+	$Text = "Drivers"
+	Set-ScriptStatus -SectionText $text -TweakTypeText $text -WindowTitle $text
 	# Create an array to store the driver information
 	$drivers = @()
 	
@@ -1398,7 +1412,7 @@ function Get-MissingDriver {
 	$devices = Get-CimInstance -ClassName Win32_PnPEntity | Where-Object {
 		$_.Status -ne "OK" -or $null -eq $_.DeviceID -or $_.Name -like "*Microsoft Basic Display Adapter*"
 	}
-	
+
 	foreach ($device in $devices) {
 		# Create a hashtable for the device information
 		If ($null -eq $device.Name) {
@@ -1411,12 +1425,19 @@ function Get-MissingDriver {
 		# Add the hashtable to the array
 		$drivers += $driverInfo
 	}
-	
+
 	If (!$drivers) {
-		Write-Status "No drivers seem to be missing, moving on."
+		Write-Status "No drivers seem to be missing." "ALL GOOD" -ForegroundColor Green
 	} else {
+		Write-Status "Drivers are missing." "!!"
 		Write-Output $drivers
-		Show-SkipQuestion -Prompt "`nDrivers seem to be missing but idk im just a computer. You're the human.. Are you going to fix them now?"
+		$q = Show-Question -Prompt "`nThere are drivers missing. Please fix them before continuing.`n`n Skip Warning?"
+		write-output $q | out-null
+		If ($q = $true) {
+			Write-Caption "Naughty naughty."
+		} else {
+			exit
+		}
 	}
 }
 function Get-NetworkStatus {
@@ -1434,17 +1455,20 @@ History:
 	param (
 		[string]$NetworkStatusType = "IPv4Connectivity"
 	)
+	$BackupTweakType = $TweakType
 	$NetStatus = (Get-NetConnectionProfile).$NetworkStatusType
 	if ($NetStatus -ne 'Internet') {
-		Write-Status "Seems like there's no network connection. Please reconnect." 'WAITING' -ForegroundColorText Yellow
+		$TweakType = "NOT CONNECTED"
+		Write-Status "Seems like there's no network connection. Please reconnect." 'WAITING' -ForegroundColor Yellow
 		while ($NetStatus -ne 'Internet') {
-			Write-Status "Waiting for Internet" "WAITING" -ForegroundColorText Yellow
+			Write-Status "Waiting for Internet" "WAITING" -ForegroundColor Yellow
 			Start-Sleep -Milliseconds 3500
 			$NetStatus = (Get-NetConnectionProfile).$NetworkStatusType
 		}
 		Test-Connection -ComputerName $Env:COMPUTERNAME -AsJob
 		Start-Sleep -Seconds 2
 		Write-Output "Connected: Moving On"
+		$Tweaktype = $BackupTweakType
 	}
 }
 function Get-Office {
@@ -1460,7 +1484,7 @@ History:
     1.0:
         - Started logging changes.
 #>
-	Show-ScriptStatus -WindowTitle "Office" -TweakTypeText "Office" -TitleCounterText "Office" -AddCounter
+	Set-ScriptStatus -WindowTitle "Office" -TweakTypeText "Office" -TitleCounterText "Office" -AddCounter
 	Write-Status "Checking for Office" '?'
 	If (Test-Path $Variables.PathToOffice64) {
 		$Variables.office64 = $true
@@ -1679,7 +1703,7 @@ Release Notes:
 	$Zero = 0
 	$One = 1
 	$OneTwo = 1
-	Show-ScriptStatus -WindowTitle "Optimization" -TweakTypeText "Registry" -TitleCounterText "Optimization" -TitleText "Optimization: General" -LogSection "Optimize: General Tweaks"	
+	Set-ScriptStatus -WindowTitle "Optimization" -TweakTypeText "Registry" -TitleCounterText "Optimization" -TitleText "Optimization: General" -LogSection "Optimize: General Tweaks"	
 	$EnableStatus = @(
 		@{
 			Symbol = "-"; Status = "Disabling";
@@ -1705,7 +1729,7 @@ Release Notes:
 	}
 	
 	If ($Skip) {
-		Write-Status "Parameter -Skip was detected.. Skipping General Tweaks." "@" -WriteWarning -ForegroundColorText Red
+		Write-Status "Parameter -Skip was detected.. Skipping General Tweaks." "@" -WriteWarning -ForegroundColor Red
 	} else {
 		if ($PSCmdlet.ShouldProcess("Optimize-General", "Optimize on General Tweaks")) {
 			If ($Variables.osVersion -like "*Windows 10*") {
@@ -1766,6 +1790,11 @@ Release Notes:
 				Write-Status "$($EnableStatus[0].Status) Meet Now from the Taskbar..." $EnableStatus[0].Symbol
 				Set-ItemPropertyVerified -Path $Registry.PathToRegCurrentVersionExplorerPolicy -Name "HideSCAMeetNow" -Type DWORD -Value $One
 				
+				# Adds End Task to taskbar
+				Write-Status "$($EnableStatus[1].Status) End Task on the Taskbar..." $EnableStatus[1].Symbol
+				Set-ItemPropertyVerified -Path $Registry.TaskBarEndTask -Name "TaskbarEndTask" -Type DWORD -Value $One
+
+
 				#endregion
 			} else {
 				# code for other operating systems
@@ -1844,7 +1873,7 @@ Release Notes:
 		[Switch]$Undo,
 		[Switch]$Skip = $SkipOptimization
 	)
-	Show-ScriptStatus -TweakTypeText "Performance" -TitleText "Optimization: Performance" -LogSection "Optimize: Performance Tweaks"
+	Set-ScriptStatus -TweakTypeText "Performance" -TitleText "Optimization: Performance" -LogSection "Optimize: Performance Tweaks"
 	$EnableStatus = @(
 		@{
 			Symbol = "-"; Status = "Disabling";
@@ -1870,7 +1899,7 @@ Release Notes:
 	}
 	
 	If ($Skip) {
-		Write-Status "Parameter -Skip was detected.. Skipping Performance." "@" -WriteWarning -ForegroundColorText Red
+		Write-Status "Parameter -Skip was detected.. Skipping Performance." "@" -WriteWarning -ForegroundColor Red
 		
 	} else {
 		
@@ -1889,11 +1918,7 @@ Release Notes:
 		Write-Status "Enable Hardware Accelerated GPU Scheduling... (Windows 10 20H1+ - Needs Restart)" $EnableStatus[1].Symbol
 		Set-ItemPropertyVerified -Path $Registry.PathToGraphicsDrives -Name "HwSchMode" -Type DWord -Value 2
 		
-		<# Retired due to Snapdragon processors #>
-		# [@] (2 = Enable Ndu, 4 = Disable Ndu)
-		#Write-Status "$($EnableStatus[0].Status) Ndu High RAM Usage..." $EnableStatus[0].Symbol
-		#Set-ItemPropertyVerified -Path $Registry.PathToLMNdu -Name "Start" -Type DWord -Value 2
-		
+
 		# Details: https://www.tenforums.com/tutorials/94628/change-split-threshold-svchost-exe-windows-10-a.html
 		# Will reduce Processes number considerably on > 4GB of RAM systems
 		Write-Status "Setting SVCHost to match installed RAM size..." $EnableStatus[1].Symbol
@@ -1934,30 +1959,16 @@ Release Notes:
 			}
 		}
 		
-		Write-Status "Setting the Monitor Timeout to AC: $($Variables.TimeoutScreenPluggedIn)..." $EnableStatus[1].Symbol -NoNewLine
-		powercfg /X Monitor-Timeout-AC $Variables.TimeoutScreenPluggedIn
-		Get-Status
-		Write-Status "Setting the Monitor Timeout to DC: $($Variables.TimeoutScreenBattery)..." $EnableStatus[1].Symbol -NoNewLine
-		powercfg /X Monitor-Timeout-DC $Variables.TimeoutScreenBattery
-		Get-Status
-		Write-Status "Setting the Standby Timeout to AC: $($Variables.TimeoutStandByPluggedIn)" $EnableStatus[1].Symbol -NoNewLine
-		powercfg /X Standby-Timeout-AC $Variables.TimeoutStandByPluggedIn
-		Get-Status
-		Write-Status "Setting the Standby Timeout to DC: $($Variables.TimeoutStandByBattery)..." $EnableStatus[1].Symbol -NoNewLine
-		powercfg /X Standby-Timeout-DC $Variables.TimeoutStandByBattery
-		Get-Status
-		Write-Status "Setting the Disk Timeout to AC: $($Variables.TimeoutDiskPluggedIn)" $EnableStatus[1].Symbol -NoNewLine
-		powercfg /X Disk-Timeout-AC $Variables.TimeoutDiskPluggedIn
-		Get-Status
-		Write-Status "Setting the Disk Timeout to DC: $($Variables.TimeoutDiskBattery)..." $EnableStatus[1].Symbol -NoNewLine
-		powercfg /X Disk-Timeout-DC $Variables.TimeoutDiskBattery
-		Get-Status
-		Write-Status "Setting the Hibernate Timeout to AC: $($Variables.TimeoutHibernatePluggedIn)..." $EnableStatus[1].Symbol -NoNewLine
-		powercfg /X Hibernate-Timeout-AC $Variables.TimeoutHibernatePluggedIn
-		Get-Status
-		Write-Status "Setting the Hibernate Timeout to DC: $($Variables.TimeoutHibernateBattery)..." $EnableStatus[1].Symbol -NoNewLine
-		Powercfg /X Hibernate-Timeout-DC $Variables.TimeoutHibernateBattery
-		Get-Status
+		# Sleep Settings
+		$Num = 0
+		foreach ($Setting in $OptionalFeatures.SleepSettings) {
+			Write-Status "Setting the $($OptionalFeatures.SleepText[$Num])..." $EnableStatus[1].Symbol -NoNewLine
+			powercfg /X $Setting
+			Get-Status
+			$Num++
+		}
+
+	
 		Write-Status "Setting Power Plan to High Performance..." $EnableStatus[1].Symbol -NoNewLine
 		powercfg /S 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
 		Get-Status
@@ -2014,9 +2025,9 @@ Release Notes:
 		Set-ItemPropertyVerified -Path $Registry.PathToLMMultimediaSystemProfile -Name "SystemResponsiveness" -Type DWord -Value 0 # Default: 20
 		
 		Write-Status "Dedicate more CPU/GPU usage to Gaming tasks..." $EnableStatus[1].Symbol
-		Set-ItemPropertyVerified -Path $Registry.PathToLMMultimediaSystemProfileOnGameTasks -Name "GPU Priority" -Type DWord -Value 8 # Default: 8
-		Set-ItemPropertyVerified -Path $Registry.PathToLMMultimediaSystemProfileOnGameTasks -Name "Priority" -Type DWord -Value 6 # Default: 2
-		Set-ItemPropertyVerified -Path $Registry.PathToLMMultimediaSystemProfileOnGameTasks -Name "Scheduling Category" -Type String -Value "High" # Default: "Medium"
+		Set-ItemPropertyVerified -Path $Registry.PathToLMMultimediaSystemProfileOnGameTask -Name "GPU Priority" -Type DWord -Value 8 # Default: 8
+		Set-ItemPropertyVerified -Path $Registry.PathToLMMultimediaSystemProfileOnGameTask -Name "Priority" -Type DWord -Value 6 # Default: 2
+		Set-ItemPropertyVerified -Path $Registry.PathToLMMultimediaSystemProfileOnGameTask -Name "Scheduling Category" -Type String -Value "High" # Default: "Medium"
 		}
 	}
 	
@@ -2042,7 +2053,7 @@ Release Notes:
 		[Switch]$Undo,
 		[Switch]$Skip = $SkipOptimization
 	)
-	Show-ScriptStatus -TweakTypeText "Privacy" -TitleText "Optimization: Privacy" -LogSection "Optimize: Privacy Tweaks"
+	Set-ScriptStatus -TweakTypeText "Privacy" -TitleText "Optimization: Privacy" -LogSection "Optimize: Privacy Tweaks"
 	$EnableStatus = @(
 		@{
 			Symbol = "-"; Status = "Disabling";
@@ -2068,7 +2079,7 @@ Release Notes:
 	}
 	
 	If ($Skip) {
-		Write-Status "Parameter -Skip was detected.. Skipping Privacy Tweaks." "@" -WriteWarning -ForegroundColorText Red
+		Write-Status "Parameter -Skip was detected.. Skipping Privacy Tweaks." "@" -WriteWarning -ForegroundColor Red
 		
 	} else {
 		
@@ -2186,9 +2197,18 @@ Release Notes:
 			
 			# Disables location tracking
 			Write-Status "$($EnableStatus[0].Status) Location Tracking..." $EnableStatus[0].Symbol
-			Set-ItemPropertyVerified -Path $Registry.RegCAM -Name "Value" -Type String -Value "Deny"
+			Set-ItemPropertyVerified -Path $Registry.RegLocationLM -Name "Value" -Type String -Value "Allow"
 			Set-ItemPropertyVerified -Path $Registry.PathToLFSVC -Name "Status" -Type DWORD -Value $Zero
 			
+			# Let desktop apps access your location
+			Write-Status "$($EnableStatus[0].Status) desktop app access to your Location..." $EnableStatus[0].Symbol
+			Set-ItemPropertyVerified -Path "$($Registry.RegLocationCU)\NonPackaged" -Name "Value" -Value "Deny" -Type String
+
+			# Let desktop apps access your location
+			Write-Status "$($EnableStatus[0].Status) app access to your Location..." $EnableStatus[0].Symbol
+			Set-ItemPropertyVerified -Path $Registry.RegLocationCU -Name "Value" -Value "Deny" -Type String
+
+
 			# Disables map updates (Windows Maps is removed)
 			Write-Status "$($EnableStatus[0].Status) Automatic Map Updates..." $EnableStatus[0].Symbol
 			Set-ItemPropertyVerified -Path:HKLM:\SYSTEM\Maps -Name "AutoUpdateEnabled" -Type DWORD -Value $Zero
@@ -2374,9 +2394,9 @@ Set-Service "HomeGroupProvider" -StartupType Disabled
 			Set-ItemPropertyVerified -Path $Registry.PathToLMLanmanServer -Name "IRPStackSize" -Type DWord -Value 20
 			
 			# Gaming Tweaks
-			Set-ItemPropertyVerified -Path $Registry.PathToLMMultimediaSystemProfileOnGameTasks -Name "GPU Priority" -Type DWord -Value 8
-			Set-ItemPropertyVerified -Path $Registry.PathToLMMultimediaSystemProfileOnGameTasks -Name "Priority" -Type DWord -Value 6
-			Set-ItemPropertyVerified -Path $Registry.PathToLMMultimediaSystemProfileOnGameTasks -Name "Scheduling Category" -Type String -Value "High"
+			Set-ItemPropertyVerified -Path $Registry.PathToLMMultimediaSystemProfileOnGameTask -Name "GPU Priority" -Type DWord -Value 8
+			Set-ItemPropertyVerified -Path $Registry.PathToLMMultimediaSystemProfileOnGameTask -Name "Priority" -Type DWord -Value 6
+			Set-ItemPropertyVerified -Path $Registry.PathToLMMultimediaSystemProfileOnGameTask -Name "Scheduling Category" -Type String -Value "High"
 			
 			Set-ItemPropertyVerified -Path $Registry.PathToLMPoliciesSQMClient -Name "CEIPEnable" -Type DWord -Value $Zero
 			Set-ItemPropertyVerified -Path $Registry.PathToLMPoliciesAppCompact -Name "AITEnable" -Type DWord -Value $Zero
@@ -2424,7 +2444,7 @@ Release Notes:
 		[Switch]$Undo,
 		[Switch]$Skip = $SkipOptimization
 	)
-	Show-ScriptStatus -TweakTypeText "Security" -TitleText "Optimization: Security" -LogSection "Optimize: Security Tweaks"
+	Set-ScriptStatus -TweakTypeText "Security" -TitleText "Optimization: Security" -LogSection "Optimize: Security Tweaks"
 	$EnableStatus = @(
 		@{
 			Symbol = "-"; Status = "Disabling";
@@ -2450,14 +2470,14 @@ Release Notes:
 		)
 	}
 	If ($Skip) {
-		Write-Status "Parameter -Skip was detected.. Skipping Security tweaks." "@" -WriteWarning -ForegroundColorText Red
+		Write-Status "Parameter -Skip was detected.. Skipping Security tweaks." "@" -WriteWarning -ForegroundColor Red
 		
 	} else {
 		
 		if ($PSCmdlet.ShouldProcess("Optimize-Security", "Optimize on Security")) {
 			Write-Section "Security Patch"
-			Write-Status "Applying Security Vulnerability Patch CVE-2023-36884 - Office and Windows HTML Remote Code Execution Vulnerability" $EnableStatus[1]
-			
+
+			Write-Status "Applying Security Vulnerability Patch CVE-2023-36884 - Office and Windows HTML Remote Code Execution Vulnerability" $EnableStatus[1].Symbol
 			Set-ItemPropertyVerified -Path $Registry.SecurityPath -Name "Excel.exe" -Type DWORD -Value $One
 			Set-ItemPropertyVerified -Path $Registry.SecurityPath -Name "Graph.exe" -Type DWORD -Value $One
 			Set-ItemPropertyVerified -Path $Registry.SecurityPath -Name "MSAccess.exe" -Type DWORD -Value $One
@@ -2553,10 +2573,10 @@ History:
 		[Switch]$Undo,
 		[Switch]$Skip = $SkipOptimization
 	)
-	Show-ScriptStatus -TweakTypeText "Services" -TitleText "Optimization: Services" -LogSection "Optimize: Service Tweaks"
+	Set-ScriptStatus -TweakTypeText "Services" -TitleText "Optimization: Services" -LogSection "Optimize: Service Tweaks"
 	
 	If ($Skip) {
-		Write-Status "Parameter -Skip was detected.. Skipping Sevices ." "@" -WriteWarning -ForegroundColorText Red
+		Write-Status "Parameter -Skip was detected.. Skipping Sevices ." "@" -WriteWarning -ForegroundColor Red
 		
 	} else {
 		if ($PSCmdlet.ShouldProcess("Optimize-Services", "Optimize on Services")) {
@@ -2599,7 +2619,7 @@ History:
 	
 	
 	If ($Skip) {
-		Write-Status "Parameter -Skip was detected.. Skipping Sevices ." "@" -WriteWarning -ForegroundColorText Red
+		Write-Status "Parameter -Skip was detected.. Skipping Sevices ." "@" -WriteWarning -ForegroundColor Red
 		
 	} else {
 		if ($PSCmdlet.ShouldProcess("Optimize-SSD", "Optimize SSD's")) {
@@ -2633,9 +2653,9 @@ History:
 		[Switch]$Undo,
 		[Switch]$Skip = $SkipOptimization
 	)
-	Show-ScriptStatus -TweakTypeText "TaskScheduler" -TitleText "Optimization: Task Scheduler" -LogSection "Optimize: Task Scheduler"
+	Set-ScriptStatus -TweakTypeText "TaskScheduler" -TitleText "Optimization: Task Scheduler" -LogSection "Optimize: Task Scheduler"
 	If ($Skip) {
-		Write-Status "Parameter -Skip was detected.. Skipping Sevices ." "@" -WriteWarning -ForegroundColorText Red
+		Write-Status "Parameter -Skip was detected.. Skipping Sevices ." "@" -WriteWarning -ForegroundColor Red
 		
 	} else {
 		if ($PSCmdlet.ShouldProcess("Optimize-TaskScheduler", "Optimize on Task Scheduler")) {
@@ -2671,9 +2691,9 @@ History:
 		[Switch]$Undo,
 		[Switch]$Skip = $SkipOptimization
 	)
-	Show-ScriptStatus -TweakTypeText "OptionalFeatures" -TitleText "Optimization: Optional Features" -LogSection "Optimize: Optional Features"
+	Set-ScriptStatus -TweakTypeText "OptionalFeatures" -TitleText "Optimization: Optional Features" -LogSection "Optimize: Optional Features"
 	If ($Skip) {
-		Write-Status "Parameter -Skip was detected.. Skipping Sevices ." "@" -WriteWarning -ForegroundColorText Red
+		Write-Status "Parameter -Skip was detected.. Skipping Sevices ." "@" -WriteWarning -ForegroundColor Red
 		
 	} else {
 		if ($PSCmdlet.ShouldProcess("Optimize-WindowsOptional", "Optimization on Optional Features")) {
@@ -2768,107 +2788,115 @@ Release Notes:
 	
 }
 function Get-ActivationStatus {
-	$LicenseCodes = @{
-		0 = 'Unlicensed'
-		1 = 'Licensed'
-		2 = 'OOBGrace'
-		3 = 'OOTGrace'
-		4 = 'NonGenuineGrace'
-		5 = 'Notification'
-		6 = 'ExtendedGrace'
-	}
-	
+<#
+.SYNOPSIS
+Checks activation status, if not activate, asks user if they want to activate using MAS (Microsoft Activation Scripts)
+
+.NOTES
+Author: Circlol
+Version: 1.0
+Activation Script: https://github.com/massgravel/Microsoft-Activation-Scripts
+Modified from https://www.reddit.com/r/PowerShell/comments/1b6b4wr/comment/ktar0t9/
+Release Notes:
+1.0:
+- Started logging changes.
+
+#>
 	$text = "Activation"
-	Show-ScriptStatus -AddCounter -TitleText $text -TitleCounterText $text -TweakTypeText $text -WindowTitle $text
-	
+	Set-ScriptStatus -SectionText $text -TweakTypeText $text -WindowTitle $text
+
 	Write-Status "Searching for Windows License Status" "@"
-	$LicenseStatus = Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" |
-	Where-Object {
-		$_.PartialProductKey
-	} | Select-Object Description, LicenseStatus
-	
-	If ($LicenseStatus.LicenseStatus -ne $LicenseCodes.1) {
+	$Activated = if(( Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" | Where-Object { $_.PartialProductKey } | Select-Object -ExpandProperty LicenseStatus) -eq 1) { 
+		Write-Output $True
+	} else {
+		Write-Output $False
+	}
+
+	If ($Activated -ne $True) {
+
 		$message = "Warning: Windows is not Activated. Would you like to run MAS now?"
 		Write-Status $message "?"
+
 		do {
-			$q = Show-Question -Message $message -Title 'Windows Activation' -Buttons YesNo -Icon Warning
+			$q = Show-Question -Message $message -Title 'Windows Activation' -Buttons YesNo -Icon Information
 		} until ($q -eq "Yes" -or $q -eq "No")
+
 		switch ($q) {
 			"Yes" {
-				# Enable TLSv1.2 for compatibility with older clients for current session
+				# Script from massgrave.dev/get
+
 				[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+				$URLs = @(
+					'https://raw.githubusercontent.com/massgravel/Microsoft-Activation-Scripts/f1ddb83df092478741344fc55351a65cf6eeafd8/MAS/All-In-One-Version-KL/MAS_AIO.cmd',
+					'https://dev.azure.com/massgrave/Microsoft-Activation-Scripts/_apis/git/repositories/Microsoft-Activation-Scripts/items?path=/MAS/All-In-One-Version-KL/MAS_AIO.cmd&versionType=Commit&version=f1ddb83df092478741344fc55351a65cf6eeafd8',
+					'https://git.activated.win/massgrave/Microsoft-Activation-Scripts/raw/commit/f1ddb83df092478741344fc55351a65cf6eeafd8/MAS/All-In-One-Version-KL/MAS_AIO.cmd'
+				)
 				
-				$DownloadURL1 = 'https://raw.githubusercontent.com/massgravel/Microsoft-Activation-Scripts/0884271c4fcdc72d95bce7c5c7bdf77ef4a9bcef/MAS/All-In-One-Version/MAS_AIO-CRC32_31F7FD1E.cmd'
-				$DownloadURL2 = 'https://bitbucket.org/WindowsAddict/microsoft-activation-scripts/raw/0884271c4fcdc72d95bce7c5c7bdf77ef4a9bcef/MAS/All-In-One-Version/MAS_AIO-CRC32_31F7FD1E.cmd'
-				
-				$URLs = @($DownloadURL1, $DownloadURL2)
-				$RandomURL1 = Get-Random -InputObject $URLs
-				$RandomURL2 = $URLs -ne $RandomURL1
-				
-				try {
-					$response = Invoke-WebRequest -Uri $RandomURL1 -UseBasicParsing
-				} catch {
-					$response = Invoke-WebRequest -Uri $RandomURL2 -UseBasicParsing
+				foreach ($URL in $URLs | Sort-Object { Get-Random }) {
+					try { $response = Invoke-WebRequest -Uri $URL -UseBasicParsing; break } catch {}
 				}
 				
-				$rand = Get-Random -Maximum 99999999
+				if (-not $response) {
+					Check3rdAV
+					Write-Host "Failed to retrieve MAS from any of the available repositories, aborting!"
+					return
+				}
+				
+				# Verify script integrity
+				$releaseHash = '2A0A5F9675BA93D11DF5EB531810F8097D1C13CE3A723FC2235A85127E86E172'
+				$stream = New-Object IO.MemoryStream
+				$writer = New-Object IO.StreamWriter $stream
+				$writer.Write($response)
+				$writer.Flush()
+				$stream.Position = 0
+				$hash = [BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash($stream)) -replace '-'
+				if ($hash -ne $releaseHash) {
+					return
+				}
+				
+				$rand = [Guid]::NewGuid().Guid
 				$isAdmin = [bool]([Security.Principal.WindowsIdentity]::GetCurrent().Groups -match 'S-1-5-32-544')
-				$FilePath = if ($isAdmin) {
-					"$env:SystemRoot\Temp\MAS_$rand.cmd"
-				} else {
-					"$env:TEMP\MAS_$rand.cmd"
+				$FilePath = if ($isAdmin) { "$env:SystemRoot\Temp\MAS_$rand.cmd" } else { "$env:USERPROFILE\AppData\Local\Temp\MAS_$rand.cmd" }
+				Set-Content -Path $FilePath -Value "@::: $rand `r`n$response"
+				
+				$env:ComSpec = "$env:SystemRoot\system32\cmd.exe"
+				Start-Process -FilePath $env:ComSpec -ArgumentList "/c """"$FilePath"" $args""" -Wait
+				
+				if (-not (Test-Path -Path $FilePath)) {
+					Check3rdAV
+					Write-Host "Failed to create MAS file in temp folder, aborting!"
+					return
 				}
 				
-				$ScriptArgs = "$args "
-				$prefix = "@::: $rand `r`n"
-				$content = $prefix + $response
-				Set-Content -Path $FilePath -Value $content
-				
-				Start-Process $FilePath $ScriptArgs -Wait
-				
-				$FilePaths = @("$env:TEMP\MAS*.cmd", "$env:SystemRoot\Temp\MAS*.cmd")
-				foreach ($FilePath in $FilePaths) {
-					Get-Item $FilePath | Remove-Item
-				}
+				$FilePaths = @("$env:SystemRoot\Temp\MAS*.cmd", "$env:USERPROFILE\AppData\Local\Temp\MAS*.cmd")
+				foreach ($FilePath in $FilePaths) { Get-Item $FilePath | Remove-Item }
+
+				# end script from massgrave.dev/get
 			}
-			"No" {
-				try {
-					Write-Status "Skipping Windows Activation" "/"
-				} catch {
-					Write-Output "Skipping Windows Activation"
-				}
-			}
-			default {
-				Write-Output "Comeonnow"
-			}
+			"No" { Write-Status "Skipping Windows Activation" "/" }
+			default { Write-Output "Comeonnow" }
 		}
 	}
 }
 function Get-Administrator {
-	# Checks to make sure New Loads is run as admin otherwise it'll display a message and close
+	
+	# Imported from Winutil @ChrisTitusTech - Unused
+	#if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+
+	# New Loads checks and assures it is running as admin
 	If (!([bool]([Security.Principal.WindowsIdentity]::GetCurrent().Groups -match 'S-1-5-32-544'))) {
 		Write-Host $Errors.errorMessage2 -ForegroundColor Yellow
-		do {
-			$SelfElevate = Read-Host -Prompt "Would you like to run New Loads as an Administrator? (Y/N) "
-			switch ($SelfElevate.ToUpper()) {
-				"Y" {
-					$wtExists = Get-Command wt
-					If ($wtExists) {
-						Start-Process wt -verb runas -ArgumentList "new-tab powershell -c ""irm run.newloads.ca | iex"""
-					} else {
-						Start-Process powershell -verb runas -ArgumentList "-command ""irm run.newloads.ca | iex"""
-					}
-					Write-Output "Exiting"
-					exit
-				}
-				"N" {
-					exit
-				}
-				default {
-					Write-Host "Invalid input. Please enter Y or N."
-				}
-			}
-		} while ($true)
+		$wtExists = Get-Command wt
+		If ($wtExists) {
+			Start-Process wt -verb runas -ArgumentList "powershell -command ""irm $($Variables.NewLoadsURL) | iex"""
+			Stop-Process $pid
+		} else {
+			Start-Process powershell -verb runas -ArgumentList "-command ""irm $($Variables.NewLoadsURL) | iex"""
+			Stop-Process $pid
+		}
+
+		Write-Output "Exiting"
+		exit
 	}
 }
 function Get-LastCheckForUpdate {
@@ -2959,7 +2987,7 @@ History:
 		$ExplorerActive = Get-Process -Name explorer
 		if ($ExplorerActive) {
 			try {
-				taskkill /f /im explorer.exe
+				taskkill /f /im explorer.exe | Write-ModifiedStatus -Types "X", "Stopping" -Status "Explorer"
 			} catch {
 				Write-Warning "Failed to stop Explorer process: $_"
 				Get-Error $Error[0]
@@ -2967,7 +2995,7 @@ History:
 			}
 		}
 		try {
-			Start-Process explorer -Wait
+			Start-Process explorer -Wait | Write-ModifiedStatus -Types "√", "Starting" -Status "Explorer"
 		} catch {
 			Write-Error "Failed to start Explorer process: $_"
 			Get-Error $Error[0]
@@ -2991,7 +3019,7 @@ History:
 		$Skip = $NoRestart
 	)
 	If ($Skip) {
-		Write-Status "Parameter -NoRestart detected. Skipping Restart ." "@" -WriteWarning -ForegroundColorText Red
+		Write-Status "Parameter -NoRestart detected. Skipping Restart ." "@" -WriteWarning -ForegroundColor Red
 		
 	} else {
 		Write-Status "User action needed - You may have to ALT + TAB " 'WAITING' -WriteWarning
@@ -3106,7 +3134,6 @@ History:
 			
 			try {
 				Write-Status "$Name set to $Value" '+' -NoNewLine
-				
 				$params = @{
 					Path		  = $Path
 					Name		  = $Name
@@ -3120,7 +3147,8 @@ History:
 				
 				if ($Force) { $params['Force'] = $true }
 				Set-ItemProperty @params
-				Get-Status; $Variables.ModifiedRegistryKeys++
+				Get-Status
+				$Variables.ModifiedRegistryKeys++
 			} catch {
 				Get-Status
 				Get-Error $Error[0]
@@ -3246,7 +3274,7 @@ Author: Circlol
 							Get-Status
 						}
 					} catch {
-						Write-Output "`n"
+						[System.Environment]::NewLine
 						Get-Status
 						Get-Error $Error.Exception.Message
 						Continue
@@ -3256,10 +3284,10 @@ Author: Circlol
 		}
 	}
 }
-function Show-ScriptStatus {
+function Set-ScriptStatus {
 <#
 .SYNOPSIS
-This script defines the Show-ScriptStatus function, which is used to display the status of the script.
+This script defines the Set-ScriptStatus function, which is used to display the status of the script.
 
 .NOTES
 Author: Circlol
@@ -3348,9 +3376,7 @@ History:
 		[System.Windows.Forms.MessageBoxIcon]$Icon = [System.Windows.Forms.MessageBoxIcon]::Information,
 		[switch]$Chime = $false
 	)
-	If ($Chime) {
-		Start-Chime
-	}
+	If ($Chime) { Start-Chime }
 	$Box = [System.Windows.Forms.MessageBox]::Show($Message, $Title, $Buttons, $Icon)
 	return $box
 }
@@ -3358,6 +3384,7 @@ History:
 
 #endregion
 #region Script Functions
+
 function Get-ADWCleaner {
 <#
 .SYNOPSIS
@@ -3377,7 +3404,7 @@ Release Notes:
 		[Switch]$Undo,
 		[Switch]$Run = $ADWCleaner
 	)
-	Show-ScriptStatus -TitleText "ADWCleaner" -TweakTypeText "Debloat" -LogSection "ADWCleaner"
+	Set-ScriptStatus -TitleText "ADWCleaner" -TweakTypeText "Debloat" -LogSection "ADWCleaner"
 	If ($Undo) {
 		Write-Status "Parameter -SkipADW detected.. Malwarebytes ADWCleaner will be skipped.." '@' -WriteWarning
 	} elseif ($Run) {
@@ -3418,13 +3445,13 @@ History:
 		[switch]$Skip = $SkipPrograms
 	)
 	
-	Show-ScriptStatus -WindowTitle "Apps" -TweakTypeText "Apps" -TitleCounterText "Programs" -TitleText "Application Installation" -AddCounter -LogSection "Program Installation"
+	Set-ScriptStatus -WindowTitle "Apps" -TweakTypeText "Apps" -TitleCounterText "Programs" -TitleText "Application Installation" -AddCounter -LogSection "Program Installation"
 	# - Program Information
 	If ($Skip -eq $True) {
-		Write-Status "Parameter -SkipPrograms detected.. Skipping Program Installation." '@' -WriteWarning -ForegroundColorText RED
+		Write-Status "Parameter -SkipPrograms detected.. Skipping Program Installation." '@' -WriteWarning -ForegroundColor RED
 	} else {
 		if ($PSCmdlet.ShouldProcess("Get-Program", "Perform program installation")) {
-			foreach ($program in $Software.chrome, $Software.vlc, $Software.zoom, $Software.acrobat, $Software.hevc, $Software.OutlookForWindows) {
+			foreach ($program in $Software.chrome, $Software.vlc, $Software.zoom, $Software.acrobat) {
 				# , $OutlookForWindows
 				Write-Section -Text $program.Name
 				# Checks if the program is installed
@@ -3493,6 +3520,114 @@ History:
 		}
 	}
 }
+function Get-ExactTimeZone {
+	Add-Type -AssemblyName "System.Windows.Forms"
+
+	# Function to filter time zones by names containing "Pacific"
+	function ScanForPacific {
+		param (
+			[Parameter(Mandatory=$true)]
+			[System.Collections.Generic.List[System.TimeZoneInfo]]$timeZones
+		)
+		
+		return $timeZones | Where-Object { $_.DisplayName -like "*Pacific*" }
+	}
+
+	# Function to filter time zones by names containing "Canada"
+	function ScanForCanada {
+		param (
+			[Parameter(Mandatory=$true)]
+			[System.Collections.Generic.List[System.TimeZoneInfo]]$timeZones
+		)
+		
+		return $timeZones | Where-Object { $_.DisplayName -like "*Canada*" }
+	}
+
+	# Function to handle selection based on the number of results
+	function Start-HandlingSelection {
+		# Get all time zones
+		$allTimeZones = [System.TimeZoneInfo]::GetSystemTimeZones()
+		
+		# Filter for "Pacific" and "Canada" time zones
+		$pacificTimeZones = ScanForPacific -timeZones $allTimeZones
+		$canadaTimeZones = ScanForCanada -timeZones $allTimeZones
+
+		# If only one match in either category, show the time zone directly
+		if ($pacificTimeZones.Count -eq 1) {
+			$selectedTimeZone = $pacificTimeZones[0]
+			return $($selectedTimeZone.DisplayName)
+		}
+		elseif ($canadaTimeZones.Count -eq 1) {
+			$selectedTimeZone = $canadaTimeZones[0]
+			return $($selectedTimeZone.DisplayName)
+		}
+		# If there are multiple matches in both categories, show the time zone selector window
+		elseif ($pacificTimeZones.Count -gt 1 -and $canadaTimeZones.Count -gt 1) {
+			Show-TimeZoneSelector -pacificTimeZones $pacificTimeZones -canadaTimeZones $canadaTimeZones
+		}
+		else {
+			[System.Windows.Forms.MessageBox]::Show("Time zone matching 'Pacific' & 'Canada' not found.")
+			return "Not Found"
+		}
+	}
+
+	# Function to show the time zone selector form
+	function Show-TimeZoneSelector {
+		param (
+			[Parameter(Mandatory=$true)]
+			[System.Collections.Generic.List[System.TimeZoneInfo]]$pacificTimeZones,
+			
+			[Parameter(Mandatory=$true)]
+			[System.Collections.Generic.List[System.TimeZoneInfo]]$canadaTimeZones
+		)
+
+		# Create the form
+		$form = New-Object System.Windows.Forms.Form
+		$form.Text = "Time Zone Selector"
+		$form.Size = New-Object System.Drawing.Size(300, 400)
+		$form.StartPosition = [System.Windows.Forms.FormStartPosition]::CenterScreen
+		$form.AutoScroll = $true  # Enable scrolling when content exceeds form size
+
+		# Set up a panel for buttons, which allows for dynamic addition
+		$panel = New-Object System.Windows.Forms.Panel
+		$panel.Dock = [System.Windows.Forms.DockStyle]::Fill
+		$panel.AutoScroll = $true  # Enable scrolling on the panel
+		$form.Controls.Add($panel)
+
+		# Define the starting position for buttons
+		$topPosition = 10
+		$buttonHeight = 30
+		$buttonWidth = $panel.ClientSize.Width - 20
+
+		# Combine Pacific and Canada time zones
+		$combinedTimeZones = $pacificTimeZones + $canadaTimeZones
+
+		# Loop through the combined filtered time zones and create buttons for each
+		foreach ($timeZone in $combinedTimeZones) {
+			$button = New-Object System.Windows.Forms.Button
+			$button.Text = $timeZone.DisplayName
+			$button.Size = New-Object System.Drawing.Size($buttonWidth, $buttonHeight)
+			$button.Location = New-Object System.Drawing.Point(10, $topPosition)
+			
+			# Add click event to show the selected time zone's Id
+			$button.Add_Click({
+				$selectedTimeZone = $timeZone
+				# Show the selected time zone's ID (which gives the correct representation)
+				[System.Windows.Forms.MessageBox]::Show("You selected: $($selectedTimeZone.Id)")
+			})
+			
+			$panel.Controls.Add($button)
+			$topPosition += $buttonHeight + 5  # Adjust position for the next button
+		}
+
+		# Show the form
+		$form.ShowDialog()
+	}
+
+	# Run the selection function
+	$TimeZone = Start-HandlingSelection
+	Return $TimeZone
+}
 function New-SystemRestorePoint {
 <#
 .SYNOPSIS
@@ -3510,12 +3645,12 @@ Release Notes:
 	Param (
 		$Skip = $SkipRestorePoint
 	)
-	Show-ScriptStatus -WindowTitle "Restore Point" -TweakTypeText "Backup" -TitleCounterText "Creating Restore Point" -LogSection "System Restore" -AddCounter 
-	$description = "Mother Computers Courtesy Restore Point"
+	Set-ScriptStatus -WindowTitle "Restore Point" -TweakTypeText "Backup" -TitleCounterText "Creating Restore Point" -LogSection "System Restore" -AddCounter 
+	$description = "Mother Computers Initial Restore Point"
 	$restorePointType = "MODIFY_SETTINGS"
 	if ($PSCmdlet.ShouldProcess("Create System Restore Point", "Creating a new restore point with description: $description")) {
 		If ($Skip) {
-			Write-Status "Parameter -SkipRestorePoint was detected.. Skipping Restore Point" "@" -WriteWarning -ForegroundColorText Red
+			Write-Status "Parameter -SkipRestorePoint was detected.. Skipping Restore Point" "@" -WriteWarning -ForegroundColor Red
 			
 		} else {
 			
@@ -3532,7 +3667,7 @@ Release Notes:
 				Get-Error $Error[0]
 				Continue
 			}
-			Show-ScriptStatus -WindowTitle ""
+			Set-ScriptStatus -WindowTitle ""
 		}
 	}
 }
@@ -3590,7 +3725,7 @@ History:
 		}
 	}
 }
-function Remove-StartPins {
+function Remove-StartPin {
 <#
 .SYNOPSIS
 Removes pinned items from the Start menu by applying a new start menu layout and then deleting it.
@@ -3827,7 +3962,7 @@ History:
 		}
 	}
 	if ($PSCmdlet.ShouldProcess('Set-Branding', "Mother Computers Branding")) {
-		Show-ScriptStatus -WindowTitle "Branding" -TweakTypeText "Branding" -TitleText "Branding" -TitleCounterText "Mother Branding" -AddCounter -LogSection "Mother's Branding"
+		Set-ScriptStatus -WindowTitle "Branding" -TweakTypeText "Branding" -TitleText "Branding" -TitleCounterText "Mother Branding" -AddCounter -LogSection "Mother's Branding"
 		If (!$Skip) {
 			# - Adds Mother Computers support info to About.
 			Write-Status "Adding Mother Computers to Support Page" '+'
@@ -3841,7 +3976,7 @@ History:
 			Write-Status "Adding Store Number to Settings Page" '+'
 			Set-ItemPropertyVerified -Path $Registry.PathToOEMInfo -Name $page -Type String -Value $Branding.Model
 		} else {
-			Write-Status "Parameter -SkipBranding detected.. Skipping Mother Computers specific branding" '@' -WriteWarning -ForegroundColorText RED
+			Write-Status "Parameter -SkipBranding detected.. Skipping Mother Computers specific branding" '@' -WriteWarning -ForegroundColor RED
 		}
 	} else {
 		Write-Host "$actionDescription operation canceled."
@@ -3934,16 +4069,16 @@ History:
 	)
 	
 	If ($Undo) {$Skip = $True}
-	Show-ScriptStatus -WindowTitle "Start Menu" -TweakTypeText "StartMenu" -TitleCounterText "Start Menu Layout" -TitleText "StartMenu" -AddCounter -LogSection "Start Menu & Taskbar"
+	Set-ScriptStatus -WindowTitle "Start Menu" -TweakTypeText "StartMenu" -TitleCounterText "Start Menu Layout" -TitleText "StartMenu" -AddCounter -LogSection "Start Menu & Taskbar"
 	if ($PSCmdlet.ShouldProcess("Set-StartMenu", "Applies a Start Menu Layout")) {
 		If ($Skip) {
-			Write-Status "Parameter -SkipBranding detected.. Skipping Mother Computers specific branding" '@' -WriteWarning -ForegroundColorText RED
+			Write-Status "Parameter -SkipBranding detected.. Skipping Mother Computers specific branding" '@' -WriteWarning -ForegroundColor RED
 		}
 		else {
 			If ($Variables.osVersion -like "*Windows 10*") {
 				Write-Section -Text "Clearing pinned start menu items for Windows 10"
 				Write-Status "Clearing Windows 10 start pins" "@"
-				Remove-StartPins
+				Remove-StartPin
 				
 				<#$layoutFile = "C:\Windows\StartMenuLayout.xml"
 				# Delete layout file if it already exists
@@ -4029,11 +4164,11 @@ History:
 	)
 	if ($PSCmdlet.ShouldProcess("Set-Taskbar", "Applies a taskbar layout")) {
 		If ($Skip -or $Undo) {
-			Write-Status "Parameter -SkipBranding detected.. Skipping Mother Computers specific branding" '@' -WriteWarning -ForegroundColorText RED
+			Write-Status "Parameter -SkipBranding detected.. Skipping Mother Computers specific branding" '@' -WriteWarning -ForegroundColor RED
 		} else {
 			Write-Status "Applying Taskbar Layout" '+' -NoNewLine
 			If (Test-Path $Variables.layoutFile) {
-				Remove-Item $Variables.layoutFile -Verbose | Out-Null
+				Remove-Item $Variables.layoutFile | Out-Null
 			}
 			$Visuals.StartLayout | Out-File $Variables.layoutFile -Encoding ASCII
 			Get-Status
@@ -4060,12 +4195,12 @@ History:
 		[Switch]$Undo,
 		[Switch]$Skip = $skipBranding
 	)
-	Show-ScriptStatus -WindowTitle "Visual" -TweakTypeText "Visuals" -TitleCounterText "Visuals" -AddCounter -LogSection "Wallpaper & Visuals"
+	Set-ScriptStatus -WindowTitle "Visual" -TweakTypeText "Visuals" -TitleCounterText "Visuals" -AddCounter -LogSection "Wallpaper & Visuals"
 	if ($PSCmdlet.ShouldProcess("Set-Wallpaper", "Sets desktop wallpaper to a specified file")) {
 		If ($Undo) {
 			Start-Process "C:\Windows\Resources\Themes\aero.theme"
 		} elseif ($Skip) {
-			Write-Status "Parameter -SkipBranding detected.. Skipping Mother Computers specific branding" '@' -WriteWarning -ForegroundColorText RED
+			Write-Status "Parameter -SkipBranding detected.. Skipping Mother Computers specific branding" '@' -WriteWarning -ForegroundColor RED
 		} else {
 			$WallpaperPathExists = Test-Path $Variables.wallpaperPath
 			If (!$WallpaperPathExists) {
@@ -4077,7 +4212,8 @@ History:
 			}
 			Write-Status "Applying Wallpaper" "+"
 			Write-Host " REMINDER " -BackgroundColor Red -ForegroundColor White -NoNewLine
-			Write-Host ": Wallpaper might not Apply UNTIL System is Rebooted`n"
+			Write-Host ": Wallpaper might not Apply UNTIL System is Rebooted"
+			[System.Environment]::NewLine
 			If (!(Test-Path $Variables.wpDest)) {
 				Write-Status "Copying Wallpaper to Destination" "+" -NoNewLine
 				Copy-Item -Path $Variables.wallpaperPath -Destination $Variables.wpDest -Force -Confirm:$False
@@ -4117,10 +4253,10 @@ History:
 	param (
 		[Switch]$Skip = $SkipBitlocker
 	)
-	Show-ScriptStatus -WindowTitle "Bitlocker" -TweakTypeText "Bitlocker" -TitleCounterText "Bitlocker Decryption" -AddCounter -LogSection "Bitlocker Decryption"
+	Set-ScriptStatus -WindowTitle "Bitlocker" -TweakTypeText "Bitlocker" -TitleCounterText "Bitlocker Decryption" -AddCounter -LogSection "Bitlocker Decryption"
 	Write-Status "Checking for Bitlocker" "@"
 	If ($Skip) {
-		Write-Status "Parameter -SkipBitlocker detected.. Skipping Bitlocker Decryption." '@' -WriteWarning -ForegroundColorText RED
+		Write-Status "Parameter -SkipBitlocker detected.. Skipping Bitlocker Decryption." '@' -WriteWarning -ForegroundColor RED
 	} else {
 		if ($PSCmdlet.ShouldProcess("Start-BitlockerDecryption", "Starts the decryption process for Bitlocker.")) {
 			# Checks if Bitlocker is active on the host
@@ -4161,7 +4297,7 @@ History:
         - Started logging changes.
 #>
 	param ()
-	Show-ScriptStatus -WindowTitle "Checking Requirements"
+	Set-ScriptStatus -WindowTitle "Checking Requirements"
 	
 	# Checks OS version to make sure Windows is atleast v20H2 otherwise it'll display a message and close
 	If ($Variables.BuildNumber -lt $variables.minbuildnumber) {
@@ -4172,8 +4308,11 @@ History:
 	
 	
 	Get-Administrator
-	Show-ScriptLogo
+	Write-Logo
+	$Text = "Bootup"
+	Set-ScriptStatus -TitleCounterText $text -AddCounter
 	Get-MissingDriver
+	Get-ActivationStatus
 	Update-Time
 	
 	$Global:StartTime = Get-Date
@@ -4250,9 +4389,9 @@ History:
 		[String]$TweakType = "Cleanup",
 		[Switch]$Undo
 	)
-	Show-ScriptStatus -WindowTitle "Cleanup" -TweakTypeText "Cleanup" -TitleCounterText "Cleanup" -TitleText "Cleanup" -AddCounter -LogSection "Cleanup"
+	Set-ScriptStatus -WindowTitle "Cleanup" -TweakTypeText "Cleanup" -TitleCounterText "Cleanup" -TitleText "Cleanup" -AddCounter -LogSection "Cleanup"
 	If ($Undo -or $Skip) {
-		Write-Status "Parameter -SkipCleanup was detected.. Skipping this section." "@" -WriteWarning -ForegroundColorText Red
+		Write-Status "Parameter -SkipCleanup was detected.. Skipping this section." "@" -WriteWarning -ForegroundColor Red
 	} else {
 		if ($PSCmdlet.ShouldProcess("Get-Program", "Perform program installation")) {
 			
@@ -4316,9 +4455,9 @@ History:
 		[String]$TweakType = "UWP"
 		
 	)
-	Show-ScriptStatus -WindowTitle "Debloat" -TweakTypeText "Debloat" -TitleCounterText "Debloat" -AddCounter -LogSection "Debloat"
+	Set-ScriptStatus -WindowTitle "Debloat" -TweakTypeText "Debloat" -TitleCounterText "Debloat" -AddCounter -LogSection "Debloat"
 	If ($Skip) {
-		Write-Status "Parameter -SkipDebloat was detected.. Skipping Debloat." "@" -WriteWarning -ForegroundColorText Red
+		Write-Status "Parameter -SkipDebloat was detected.. Skipping Debloat." "@" -WriteWarning -ForegroundColor Red
 	} else {
 		If (!$Undo) {
 			# Remove Win32 apps
@@ -4376,7 +4515,8 @@ History:
 			Write-Progress -Activity "Debloating System" -Completed
 			
 			# Debloat Completion
-			Write-Host "Debloat Completed!`n" -Foregroundcolor Green
+			Write-Host "Debloat Completed!" -Foregroundcolor Green
+			[System.Environment]::NewLine
 			Write-Host "Packages Removed: " -NoNewline -ForegroundColor Gray
 			Write-Host $Variables.Removed -ForegroundColor Green
 			If ($Failed) {
@@ -4384,8 +4524,8 @@ History:
 				Write-Host $Variables.FailedPackages -ForegroundColor Red
 			}
 			Write-Host "Packages Scanned For: " -NoNewline -ForegroundColor Gray
-			Write-Host "$($Variables.PackagesNotFound)`n" -ForegroundColor Yellow
-			
+			Write-Host "$($Variables.PackagesNotFound)" -ForegroundColor Yellow
+			[System.Environment]::NewLine
 		} elseif ($Undo) {
 			
 			if ($PSCmdlet.ShouldProcess("Default Apps", "Reinstall")) {
@@ -4490,12 +4630,14 @@ Updates the time zone and synchronizes the system time.
 			Created function.
 		- 1.1
 			Added manual time synchronization using external time server.
+			Created Get-ExactTimeZone function to handle scanning for Pacific Canada.
 #>
 	[CmdletBinding(SupportsShouldProcess)]
 	param ()
-	
-	[string]$TimeZoneId = (Get-TimeZone -ListAvailable | Where-Object -Property ID -like 'Pacific Standard Time' -Unique).ID
-
+	[String]$TimeZoneId = Get-ExactTimeZone
+	#[string]$TimeZoneId = (Get-TimeZone -ListAvailable | Where-Object -Property ID -like 'Pacific Standard Time').ID
+	$text = "Time & Date"
+	Set-ScriptStatus -SectionText $Text -TweakTypeText $text -WindowTitle $text
 	try {
 		# Checks Time zone against specified
 		$currentTimeZone = (Get-TimeZone).DisplayName
@@ -4513,39 +4655,8 @@ Updates the time zone and synchronizes the system time.
 		Continue
 	}
 
-	if ($PSCmdlet.ShouldProcess("Time synchronization", "Setting time manually")) {
-		
-		Write-Status "Setting time manually." '+'
-		
-		# Get time from an external time server
-		try {
-			
-			Get-NetworkStatus
-			$timeUrl = "http://worldtimeapi.org/api/ip"
-			Write-Status "Getting time from worldtimeapi.org" "@" -NoNewLine
-			$timeResponse = Invoke-RestMethod -Uri $timeUrl -Method Get
-			Get-Status
-			
-			Write-Status "Converting Output to Local Time" "@" -NoNewLine
-			$localTime = [datetime]::Parse($timeResponse.datetime).ToLocalTime()
-			Get-Status
-			
-			$dateTimeString = $localTime.ToString("yyyy-MM-dd HH:mm:ss")
-			$dateTime = [DateTime]::ParseExact($dateTimeString, "yyyy-MM-dd HH:mm:ss", $null)
-			Write-Status "Setting date and time to $dateTimeString" "+" -NoNewLine
-			Set-Date -Date $dateTime | Out-Null
-			Get-Status
 
-			
-		} catch {
-			Get-Status
-			Get-Error $Error[0]
-			$Variables.FailedRegistryKeys++
-			Continue
-		}
-	}
-
-		<# Synchronize Time
+		# Synchronize Time
 		$w32TimeService = Get-Service W32Time
 		if ($w32TimeService.Status -ne "Running") {
 			if ($PSCmdlet.ShouldProcess("W32Time Service", "Starting service")) {
@@ -4571,13 +4682,46 @@ Updates the time zone and synchronizes the system time.
 			$resyncOutput = w32tm /resync
 			
 			# Catches resyncs output, if it couldn't change it will be attempted manually here.
-			if ($resyncOutput -like "*The computer did not resync because the required time change was too big.*") { #>
-			#}
-		#}
+			if ($resyncOutput -like "*The computer did not resync because the required time change was too big.*") {
+				if ($PSCmdlet.ShouldProcess("Time synchronization", "Setting time manually")) {
+					
+					Write-Status "Setting time manually." '+'
+					
+					# Get time from an external time server
+					try {
+						
+						Get-NetworkStatus
+						$timeUrl = "http://worldtimeapi.org/api/ip"
+						Write-Status "Getting time from $timeURL" "@" -NoNewLine
+						$timeResponse = Invoke-RestMethod -Uri $timeUrl -Method Get
+						Get-Status
+						
+						Write-Status "Converting Output to Local Time" "@" -NoNewLine
+						$localTime = [datetime]::Parse($timeResponse.datetime).ToLocalTime()
+						Get-Status
+						
+						$dateTimeString = $localTime.ToString("yyyy-MM-dd HH:mm:ss")
+						$dateTime = [DateTime]::ParseExact($dateTimeString, "yyyy-MM-dd HH:mm:ss", $null)
+						Write-Status "Setting date and time to $dateTimeString" "+" -NoNewLine
+						Set-Date -Date $dateTime | Out-Null
+						Get-Status
+						
+						
+					} catch {
+						Get-Status
+						Get-Error $Error[0]
+						$Variables.FailedRegistryKeys++
+						Continue
+					}
+				}
+			}
+		}
 }
 
 #endregion
+
 #region depricated
+<#
 function Update-Time.Old {
 <#
 .SYNOPSIS
@@ -4592,7 +4736,7 @@ This example updates the system time zone to Eastern Time (US & Canada) and sync
 	Change Log: 
 		- 1.0
 			Created function.
-#>
+##
 	[CmdletBinding(SupportsShouldProcess)]
 	param (
 		[string]$TimeZoneId = "Pacific Standard Time"
@@ -4654,7 +4798,7 @@ Function Get-Motherboard {
 	Release Notes:
 	1.0:
 		- Started logging changes.
-	#>
+	#
 		[CmdletBinding()]
 		[OutputType([String])]
 		param ()
@@ -4664,6 +4808,7 @@ Function Get-Motherboard {
 		return "$CombinedString"
 	}
 function Remove-InstalledProgram {
+
 	## TODO Attempt to make this function compatible with all types of programs and strings
 <#
 .SYNOPSIS
@@ -4675,7 +4820,7 @@ Version: 1.0
 History:
     1.0:
         - Started logging changes.
-#>
+#
 	[CmdletBinding(SupportsShouldProcess)]
 	param (
 		[Parameter(Mandatory = $true)]
@@ -4762,28 +4907,29 @@ History:
 		}
 	}
 }
+#>
 #endregion
 
-
-
+#>
 #endregion
 #region Execution
 
 
-Start-Bootup
+
 
 try {
-	Import-Module Appx
-	Import-Module BitsTransfer
-	Import-Module CimCmdlets
-	Import-Module ScheduledTasks
-	Import-Module PrintManagement
-	Import-Module DnsClient
-	
-	
+	Start-Bootup
+	Add-Type -AssemblyName System.Windows.Forms -Verbose:$VerbosePreference
+	Add-Type -AssemblyName System.Drawing -Verbose:$VerbosePreference
+
+	Import-Module Appx -Verbose:$VerbosePreference
+	Import-Module BitsTransfer -Verbose:$VerbosePreference
+	Import-Module CimCmdlets -Verbose:$VerbosePreference
+	Import-Module ScheduledTasks -Verbose:$VerbosePreference
+	Import-Module PrintManagement -Verbose:$VerbosePreference
+	Import-Module DnsClient -Verbose:$VerbosePreference
 } catch {
-	throw "An error occured while importing modules: $_"
-	
+	throw "An error occured while booting up. Error: $_"
 }
 
 Get-Program -WhatIf:$WhatIfPreference
@@ -4810,4 +4956,4 @@ Start-Cleanup -WhatIf:$WhatIfPreference
 Request-PCRestart
 
 
-#endregion
+#endregion 
