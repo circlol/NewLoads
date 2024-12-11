@@ -46,7 +46,7 @@ function Start-Terminal {
 
     if ($PSCmdlet.ShouldProcess($message)) {
         Write-Output $message
-        Start-Process -FilePath $filePath -verb runas -ArgumentList $command -nonewwindow -wait
+        Start-Process -FilePath $filePath -verb runas -ArgumentList $command -NoNewWindow
         $Global:CommandsRun += "$link`n"
         Show-MainMenu
     }
