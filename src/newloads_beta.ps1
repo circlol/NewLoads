@@ -1398,7 +1398,7 @@ Release Notes:
 			InstallDate     = $_.GetValue("InstallDate")
 			UninstallString = $_.GetValue("UninstallString")
 		}
-	} | Sort-Object -Property Name -Unique
+	} | Sort-Object -Property Name -Unique | Format-Table -AutoSize
 }
 function Get-MissingDriver {
 	[CmdletBinding()]
@@ -1416,7 +1416,7 @@ function Get-MissingDriver {
 	foreach ($device in $devices) {
 		# Create a hashtable for the device information
 		If ($null -eq $device.Name) {
-			#$friendly = $device.Caption
+			$friendly = $device.Caption
 		}
 		$driverInfo = @{
 			FriendlyName = $device.Name
@@ -1431,16 +1431,16 @@ function Get-MissingDriver {
 	} else {
 		Write-Status "Drivers are missing." "!!"
 		Write-Output $drivers
-		$q = Show-Question -Buttons YesNo -Message "`nThere are drivers missing. Please fix them before continuing.`n`n Skip Warning?" -Icon Information
+		$q = Show-Question -Buttons YesNo -Message "`nThere seems to be drivers missing. Please fix them before continuing.`n`n Skip this warning and continue?" -Icon Information
 		write-output $q | out-null
 		If ($q = $true) {
-			Show-Question -Buttons Ok -Message "Naughty naughty.. Go download the driver." -Icon None
-			exit
+			Write-Status "Moving on." ">:("
 		} else {
 			exit
 		}
 	}
 }
+
 function Get-NetworkStatus {
 <#
 .SYNOPSIS
@@ -3808,7 +3808,7 @@ History:
         - Started logging changes.
 #>
 	
-	# Formats time in various variables
+	# Time related variables
 	$EndTime = Get-Date
 	$CurrentDateFormatted = $StartTime.ToString("dddd MMMM dd, yyyy - h:mm:ss tt")
 	$FormattedStartTime = $StartTime.ToString("h:mm:ss tt")
@@ -3828,8 +3828,15 @@ History:
 	# - System Information
 	$SystemSpecs = Get-SystemInfo
 	$MoboSerial = (Get-CimInstance -ClassName Win32_BaseBoard).SerialNumber
-	$CPUSerial
+	$CPUSerial  = (Get-CimInstance -ClassName Win32_Processor).SerialNumber
+	$RAMSerial  = (Get-CimInstance -ClassName Win32_PhysicalMemory).SerialNumber
+	$DiskSerial = (Get-CimInstance -ClassName Win32_DiskDrive).SerialNumber
+	#$DiskSerial = (Get-Disk).SerialNumber    # Alternative Method
+
+	# Resolves IP address using OpenDNS
 	$IP = $(Resolve-DnsName -Name myip.opendns.com -Server 208.67.222.220).IPAddress
+
+	# Checks the wallpaper was applied
 	$WallpaperApplied = if ($Variables.CurrentWallpaper -eq $Variables.wpDest) { "YES" } else { "NO" }
 	
 	# - Checks if all the programs got installed
@@ -3839,8 +3846,8 @@ History:
 		$ProgramStatus[$program] = if (Get-InstalledProgram -Name $program) { "YES" } else { "NO" }
 	}
 	
-	$OptionalFeatures = Get-CimInstance -ClassName Win32_OptionalFeature | Format-Table -AutoSize
-	$UsersList = Get-CimInstance -ClassName Win32_Account | Format-Table -AutoSize -Property "Caption","Domain","Name","SID"
+	$OptionalFeaturesList = Get-CimInstance -ClassName Win32_OptionalFeature | Format-Table -AutoSize | Out-String
+	$UsersList = Get-LocalUser | Out-String
 
 
 	# - Email Settings
@@ -3910,7 +3917,7 @@ $ListOfInstalledApplications
 $ListOfInstalledPackages
 
 - OptionalFeatures Installed:
-$OptionalFeatures
+$OptionalFeaturesList
 
 - Users List:
 $UsersList
