@@ -46,13 +46,14 @@ function Start-Terminal {
 
     if ($PSCmdlet.ShouldProcess($message)) {
         Write-Output $message
-        Start-Process -FilePath $filePath -verb runas -ArgumentList $command
+        Start-Process -FilePath $filePath -verb runas -ArgumentList $command -NoNewWindow
         $Global:CommandsRun += "$link`n"
         Show-MainMenu
     }
 }
 function Show-MainMenu {
     $width = [Console]::WindowWidth
+    Clear-Host
     $border = "*" * $width
     $text1 = "                    1 - New Loads"
     $text2 = "                    2 - TechToolkit"
