@@ -5199,7 +5199,7 @@ If (!$Undo -and !$WhatIfPreference) {
 	Start-Bootup
 	#Start-Update
 	Get-Program # Task1
-	Get-ActivationStatus
+	#Get-ActivationStatus
 	Set-StartMenu # Task2
 	Set-Taskbar
 	Set-Wallpaper
