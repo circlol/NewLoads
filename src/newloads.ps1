@@ -3914,12 +3914,13 @@ History:
 						}
 					}
 					
-					# Adds UBlock Origin to Chrome
+					<# Adds UBlock Origin to Chrome  - - - Disabled due to Manifest V3
 					if ($program.Name -eq $Chrome.name) {
 						Write-Status "Adding UBlock Origin to Chrome" '+'
 						Set-ItemPropertyVerified -Path $Registry.PathToUblockChrome -Name "update_url" -value $Chrome.ChromeLink -Type STRING
 						# TODO Create this - Set-ItemPropertyVerified -Path $Registry.PathToUblockEdge -Name "update_url" -value $Chrome.ChromeLink -Type STRING
 					}
+					#>
 				} else {
 					# Checks if installed if it is then skips the installation
 					Write-Status "$($program.Name) already seems to be installed on this system.. Skipping Installation" "@"
