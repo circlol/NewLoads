@@ -4792,13 +4792,16 @@ History:
 			Write-Status "Cleaning Temp Folder" "-"
 			Remove-Item "$NewLoads\*.*" -Force -Recurse -Exclude "New Loads"
 			
-			try {
-				Write-Status "Removing Log Files" -NoLogEntry
-				Get-Item $Variables.Log -ErrorAction SilentlyContinue | Remove-Item
-				Get-Item $Variables.ErrorLog -ErrorAction SilentlyContinue | Remove-Item
-			}catch {
-				return "Error removing log files. Likely the log doesn't exist."
-			}
+			<#Write-Status "Looking for New Loads logs to remove"
+			Remove-Item "$Env:USERPROFILE\Desktop\New Loads.txt"
+			Get-Status
+			Remove-Item "$Env:USERPROFILE\Desktop\New Loads Errors.txt"
+			Get-Status
+			Remove-Item "$Env:OneDrive\Desktop\New Loads.txt"
+			Get-Status
+			Remove-Item "$Env:OneDrive\Desktop\New Loads Errors.txt"
+			Get-Status#>
+			
 			
 			# - Removes installed program shortcuts from Public/User Desktop
 			foreach ($shortcut in $Variables.shortcuts) {
