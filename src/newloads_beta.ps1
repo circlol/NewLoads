@@ -470,7 +470,7 @@ $Services = @{
 		#"wscsvc"                                   	 # DEFAULT: Automatic | Windows Security Center Service
 		#"WdNisSvc"                                		 # DEFAULT: Manual    | Windows Defender Network Inspection Service
 		"NPSMSvc_df772"
-		"LanmanServer"
+		#"LanmanServer"
 		
 	)
 	
