@@ -636,12 +636,12 @@ $Software = @{
 		"Microsoft.ZuneMusic" 											# Groove Music / (New) Windows Media Player
 		"Microsoft.ZuneVideo" 											# Movies & TV
 		"Microsoft.XboxApp" 											# Xbox App
-		"Microsoft.Xbox.TCUI" 											# Xbox
+		#"Microsoft.Xbox.TCUI" 											# Xbox
 		# "Microsoft.XboxGameCallableUI"                         		 # Xbox Game Callable UI ## NON-REMOVABLE = TRUE
 		"Microsoft.XboxIdentityProvider"								# Xbox Identity Provider
-		"Microsoft.XboxGameOverlay" 									# Xbox Game Overlay
-		"Microsoft.XboxGamingOverlay" 									# Xbox Game Bar 
-		"Microsoft.XboxSpeechToTextOverlay"								# Xbox Text To Speech Overlay
+		#"Microsoft.XboxGameOverlay" 									# Xbox Game Overlay
+		#"Microsoft.XboxGamingOverlay" 									# Xbox Game Bar 
+		# "Microsoft.XboxSpeechToTextOverlay"							 # Xbox Text To Speech Overlay
 		# 3rd party Apps
 		"*ACGMediaPlayer*" 												# ACGMediaPlayer
 		"*ActiproSoftwareLLC*" 											# ActiproSoftware
