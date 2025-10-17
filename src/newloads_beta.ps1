@@ -638,7 +638,7 @@ $Software = @{
 		"Microsoft.XboxApp" 											# Xbox App
 		#"Microsoft.Xbox.TCUI" 											# Xbox
 		# "Microsoft.XboxGameCallableUI"                         		 # Xbox Game Callable UI ## NON-REMOVABLE = TRUE
-		"Microsoft.XboxIdentityProvider"								# Xbox Identity Provider
+		#"Microsoft.XboxIdentityProvider"								# Xbox Identity Provider
 		#"Microsoft.XboxGameOverlay" 									# Xbox Game Overlay
 		#"Microsoft.XboxGamingOverlay" 									# Xbox Game Bar 
 		# "Microsoft.XboxSpeechToTextOverlay"							 # Xbox Text To Speech Overlay
