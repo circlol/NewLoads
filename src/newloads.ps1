@@ -1980,17 +1980,45 @@ Release Notes:
 			}
 		)
 	}
-	
+
 	if ($PSCmdlet.ShouldProcess("Optimize-Performance", "Performance enhancing tweaks")) {
+	# Power Plans
+		Write-Section -Text "Power Plan Tweaks"
+		Write-Status "Cleaning up duplicated Power plans..." "@"
 		$ExistingPowerPlans = $((powercfg -L)[3 .. (powercfg -L).Count])
 		# Found on the registry: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\User\Default\PowerSchemes
 		$BuiltInPowerPlans = @{
 			"Power Saver"		     = "a1841308-3541-4fab-bc81-f71556f20b4a"
-			"Balanced (recommended)" = "381b4222-f694-41f0-9685-ff5bb260df2e"
+			"Balanced" 				 = "381b4222-f694-41f0-9685-ff5bb260df2e"
 			"High Performance"	     = "8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c"
-			"Ultimate Performance"   = "e9a42b02-d5df-448d-aa00-03f14749eb61"
 		}
 		$UniquePowerPlans = $BuiltInPowerPlans.Clone()
+		ForEach ($PowerCfgString in $ExistingPowerPlans) {
+			$PowerPlanGUID = $PowerCfgString.Split(':')[1].Split('(')[0].Trim()
+			$PowerPlanName = $PowerCfgString.Split('(')[-1].Replace(')', '').Trim()
+			If (($PowerPlanGUID -in $BuiltInPowerPlans.Values)) {
+				Write-Status "The '$PowerPlanName' power plan` is built-in, skipping $PowerPlanGUID ..." '@'
+				Continue
+			}
+			Try {
+				If (($PowerPlanName -notin $UniquePowerPlans.Keys) -and ($PowerPlanGUID -notin $UniquePowerPlans.Values)) {
+					$UniquePowerPlans.Add($PowerPlanName, $PowerPlanGUID)
+				} Else {
+					Write-Status "Duplicated '$PowerPlanName' power plan found, deleting $PowerPlanGUID ..." "-" -NoNewLine
+					powercfg -Delete $PowerPlanGUID
+					Get-Status
+				}
+			} Catch {
+				Write-Status "Duplicated '$PowerPlanName' power plan found, deleting $PowerPlanGUID ..." "-" -NoNewLine
+				powercfg -Delete $PowerPlanGUID
+				Get-Status
+			}
+		}
+		
+		Write-Status "Setting Power Plan to High Performance..." $EnableStatus[1].Symbol -NoNewLine
+		powercfg -SetActive "381b4222-f694-41f0-9685-ff5bb260df2e"
+		Get-Status
+
 		
 		Write-Caption -Text "Display" -Type None
 		Write-Status "Enable Hardware Accelerated GPU Scheduling... (Windows 10 20H1+ - Needs Restart)" $EnableStatus[1].Symbol
@@ -2016,61 +2044,6 @@ Release Notes:
 		
 		Write-Status "$($EnableStatus[0].Status) run extensions and apps when Edge is closed..." $EnableStatus[0].Symbol
 		Set-ItemPropertyVerified -Path $Registry.PathToLMPoliciesEdge -Name "BackgroundModeEnabled" -Type DWord -Value $Zero
-		
-		Write-Section -Text "Power Plan Tweaks"
-		Write-Status "Cleaning up duplicated Power plans..." "@"
-		ForEach ($PowerCfgString in $ExistingPowerPlans) {
-			$PowerPlanGUID = $PowerCfgString.Split(':')[1].Split('(')[0].Trim()
-			$PowerPlanName = $PowerCfgString.Split('(')[-1].Replace(')', '').Trim()
-			If (($PowerPlanGUID -in $BuiltInPowerPlans.Values)) {
-				Write-Status "The '$PowerPlanName' power plan` is built-in, skipping $PowerPlanGUID ..." '@'
-				Continue
-			}
-			Try {
-				If (($PowerPlanName -notin $UniquePowerPlans.Keys) -and ($PowerPlanGUID -notin $UniquePowerPlans.Values)) {
-					$UniquePowerPlans.Add($PowerPlanName, $PowerPlanGUID)
-				} Else {
-					Write-Status "Duplicated '$PowerPlanName' power plan found, deleting $PowerPlanGUID ..." "-" -NoNewLine
-					powercfg -Delete $PowerPlanGUID
-					Get-Status
-				}
-			} Catch {
-				Write-Status "Duplicated '$PowerPlanName' power plan found, deleting $PowerPlanGUID ..." "-" -NoNewLine
-				powercfg -Delete $PowerPlanGUID
-				Get-Status
-			}
-		}
-		
-		Write-Status "Setting the Monitor Timeout to AC: $($Variables.TimeoutScreenPluggedIn)..." $EnableStatus[1].Symbol -NoNewLine
-		powercfg -Change Monitor-Timeout-AC $Variables.TimeoutScreenPluggedIn
-		Get-Status
-		Write-Status "Setting the Monitor Timeout to DC: $($Variables.TimeoutScreenBattery)..." $EnableStatus[1].Symbol -NoNewLine
-		powercfg -Change Monitor-Timeout-DC $Variables.TimeoutScreenBattery
-		Get-Status
-		Write-Status "Setting the Standby Timeout to AC: $($Variables.TimeoutStandByPluggedIn)" $EnableStatus[1].Symbol -NoNewLine
-		powercfg -Change Standby-Timeout-AC $Variables.TimeoutStandByPluggedIn
-		Get-Status
-		Write-Status "Setting the Standby Timeout to DC: $($Variables.TimeoutStandByBattery)..." $EnableStatus[1].Symbol -NoNewLine
-		powercfg -Change Standby-Timeout-DC $Variables.TimeoutStandByBattery
-		Get-Status
-		Write-Status "Setting the Disk Timeout to AC: $($Variables.TimeoutDiskPluggedIn)" $EnableStatus[1].Symbol -NoNewLine
-		powercfg -Change Disk-Timeout-AC $Variables.TimeoutDiskPluggedIn
-		Get-Status
-		Write-Status "Setting the Disk Timeout to DC: $($Variables.TimeoutDiskBattery)..." $EnableStatus[1].Symbol -NoNewLine
-		powercfg -Change Disk-Timeout-DC $Variables.TimeoutDiskBattery
-		Get-Status
-		Write-Status "Setting the Hibernate Timeout to AC: $($Variables.TimeoutHibernatePluggedIn)..." $EnableStatus[1].Symbol -NoNewLine
-		powercfg -Change Hibernate-Timeout-AC $Variables.TimeoutHibernatePluggedIn
-		Get-Status
-		Write-Status "Setting the Hibernate Timeout to DC: $($Variables.TimeoutHibernateBattery)..." $EnableStatus[1].Symbol -NoNewLine
-		Powercfg -Change Hibernate-Timeout-DC $Variables.TimeoutHibernateBattery
-		Get-Status
-		Write-Status "Setting Power Plan to High Performance..." $EnableStatus[1].Symbol -NoNewLine
-		powercfg -SetActive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
-		Get-Status
-		Write-Status "Creating the Ultimate Performance hidden Power Plan..." $EnableStatus[1].Symbol -NoNewLine
-		powercfg -DuplicateScheme e9a42b02-d5df-448d-aa00-03f14749eb61
-		Get-Status
 		
 		
 		Write-Section "Network & Internet"
