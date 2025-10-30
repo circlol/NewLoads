@@ -4782,6 +4782,10 @@ History:
 					Get-Status
 				}
 			}
+
+			# - Removes New Loads Log file
+			Write-Status "Removing $($Variables.Log)" "-"
+			Remove-Item "$($Variables.Log)" -Force -Verbose 
 		}
 	}
 }
