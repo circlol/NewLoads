@@ -4419,16 +4419,6 @@ History:
 			Write-Status "Cleaning Temp Folder" -NoLogEntry
 			Remove-Item $NewLoads -Force -Recurse
 			
-			try {
-				Write-Status "Removing Log Files" -NoLogEntry
-				Get-Item $Variables.Log -ErrorAction SilentlyContinue | Remove-Item
-				Get-Item $Variables.ErrorLog -ErrorAction SilentlyContinue | Remove-Item
-			}catch {
-				return "Error removing log files. Likely the log doesn't exist."
-			}
-			
-			
-			
 			# - Removes installed program shortcuts from Public/User Desktop
 			foreach ($shortcut in $Variables.shortcuts) {
 				$ShortcutExist = Test-Path $shortcut
@@ -4442,6 +4432,15 @@ History:
 			Write-Status "Launching Set As Default for Http and Https, Make sure to select always use and preferred browser." "@" -NoLogEntry
 			Start-Process "https://google.ca"
 			Start-Sleep -Seconds 5
+
+			try {
+				Write-Status "Removing Log: $($Variables.Log)" "-" -NoLogEntry
+				Get-Item $Variables.Log -ErrorAction SilentlyContinue | Remove-Item
+				#Get-Item $Variables.ErrorLog -ErrorAction SilentlyContinue | Remove-Item
+			}catch {
+				return "Error removing log files. Likely the log doesn't exist."
+			}
+			
 			
 		}
 	}
