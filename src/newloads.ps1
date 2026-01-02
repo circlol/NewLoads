@@ -42,8 +42,8 @@ $Variables = @{
 	"LogoColor"	       = "Magenta"
 	
 	"Time"			   = Get-Date -UFormat %Y%m%d
-	"MaxTime"		   = 251010
-	"MinTime"		   = 240710
+	"MaxTime"		   = 260601
+	"MinTime"		   = 251231
 	"Counter"		   = 1
 	"MaxLength"	       = 11
 	"Win11"		       = 22000
