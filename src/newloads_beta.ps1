@@ -2825,57 +2825,7 @@ Release Notes:
 		} until ($q -eq "Yes" -or $q -eq "No")
 
 		switch ($q) {
-			"Yes" {
-				# Script from massgrave.dev/get
-
-				[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-				$URLs = @(
-					'https://raw.githubusercontent.com/massgravel/Microsoft-Activation-Scripts/f1ddb83df092478741344fc55351a65cf6eeafd8/MAS/All-In-One-Version-KL/MAS_AIO.cmd',
-					'https://dev.azure.com/massgrave/Microsoft-Activation-Scripts/_apis/git/repositories/Microsoft-Activation-Scripts/items?path=/MAS/All-In-One-Version-KL/MAS_AIO.cmd&versionType=Commit&version=f1ddb83df092478741344fc55351a65cf6eeafd8',
-					'https://git.activated.win/massgrave/Microsoft-Activation-Scripts/raw/commit/f1ddb83df092478741344fc55351a65cf6eeafd8/MAS/All-In-One-Version-KL/MAS_AIO.cmd'
-				)
-				
-				foreach ($URL in $URLs | Sort-Object { Get-Random }) {
-					try { $response = Invoke-WebRequest -Uri $URL -UseBasicParsing; break } catch {}
-				}
-				
-				if (-not $response) {
-					Check3rdAV
-					Write-Host "Failed to retrieve MAS from any of the available repositories, aborting!"
-					return
-				}
-				
-				# Verify script integrity
-				$releaseHash = '2A0A5F9675BA93D11DF5EB531810F8097D1C13CE3A723FC2235A85127E86E172'
-				$stream = New-Object IO.MemoryStream
-				$writer = New-Object IO.StreamWriter $stream
-				$writer.Write($response)
-				$writer.Flush()
-				$stream.Position = 0
-				$hash = [BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash($stream)) -replace '-'
-				if ($hash -ne $releaseHash) {
-					return
-				}
-				
-				$rand = [Guid]::NewGuid().Guid
-				$isAdmin = [bool]([Security.Principal.WindowsIdentity]::GetCurrent().Groups -match 'S-1-5-32-544')
-				$FilePath = if ($isAdmin) { "$env:SystemRoot\Temp\MAS_$rand.cmd" } else { "$env:USERPROFILE\AppData\Local\Temp\MAS_$rand.cmd" }
-				Set-Content -Path $FilePath -Value "@::: $rand `r`n$response"
-				
-				$env:ComSpec = "$env:SystemRoot\system32\cmd.exe"
-				Start-Process -FilePath $env:ComSpec -ArgumentList "/c """"$FilePath"" $args""" -Wait
-				
-				if (-not (Test-Path -Path $FilePath)) {
-					Check3rdAV
-					Write-Host "Failed to create MAS file in temp folder, aborting!"
-					return
-				}
-				
-				$FilePaths = @("$env:SystemRoot\Temp\MAS*.cmd", "$env:USERPROFILE\AppData\Local\Temp\MAS*.cmd")
-				foreach ($FilePath in $FilePaths) { Get-Item $FilePath | Remove-Item }
-
-				# end script from massgrave.dev/get
-			}
+			"Yes" { Write-Output "Disabled" }
 			"No" { Write-Status "Skipping Windows Activation" "/" }
 			default { Write-Output "Comeonnow" }
 		}
